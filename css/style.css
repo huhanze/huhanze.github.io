@@ -1803,7 +1803,7 @@ i.icon:before {
 }
 .highlight {
   color: #000;
-  background: #fff;
+  background: #f7f7f7;
 }
 .highlight .code .comment,
 .highlight .code .quote {
