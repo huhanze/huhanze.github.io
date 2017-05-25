@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>C++运算符重载和友元函数 | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="C++" />
+    
+    <meta name="description" content="1. 运算符重载1.1 概念&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp运算符重载是一种形式的C++多态。运算符重载将重载的概念扩展到运算符上，允许C++运算符多种含义。实际上很多C++运算符已经被重载，如：将*运算符用于地址，将得到存储在这个地址中的值；但将它用于两个数字时，得到的将是它们的乘积。
+&amp;amp;nbs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++运算符重载和友元函数">
+<meta property="og:url" content="http://yoursite.com/2017/05/23/technology/C++运算符重载和友元函数/index.html">
+<meta property="og:site_name" content="Dylan.Hu'Memory">
+<meta property="og:description" content="1. 运算符重载1.1 概念&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp运算符重载是一种形式的C++多态。运算符重载将重载的概念扩展到运算符上，允许C++运算符多种含义。实际上很多C++运算符已经被重载，如：将*运算符用于地址，将得到存储在这个地址中的值；但将它用于两个数字时，得到的将是它们的乘积。
+&amp;amp;nbs">
+<meta property="og:image" content="http://yoursite.com/../../images/C++_overLoad_1.png">
+<meta property="og:updated_time" content="2017-05-25T08:30:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++运算符重载和友元函数">
+<meta name="twitter:description" content="1. 运算符重载1.1 概念&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp&amp;amp;nbsp运算符重载是一种形式的C++多态。运算符重载将重载的概念扩展到运算符上，允许C++运算符多种含义。实际上很多C++运算符已经被重载，如：将*运算符用于地址，将得到存储在这个地址中的值；但将它用于两个数字时，得到的将是它们的乘积。
+&amp;amp;nbs">
+<meta name="twitter:image" content="http://yoursite.com/../../images/C++_overLoad_1.png">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/technology/">技术</a>
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-technology/C++运算符重载和友元函数" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        C++运算符重载和友元函数
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2017/05/23/technology/C++运算符重载和友元函数/" class="article-date">
+    <time datetime="2017-05-23T02:11:01.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h2 id="1-运算符重载"><a href="#1-运算符重载" class="headerlink" title="1. 运算符重载"></a>1. 运算符重载</h2><h3 id="1-1-概念"><a href="#1-1-概念" class="headerlink" title="1.1 概念"></a>1.1 概念</h3><p></p><p>&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp运算符重载是一种形式的C++多态。运算符重载将重载的概念扩展到运算符上，允许C++运算符多种含义。实际上很多C++运算符已经被重载，如：将*运算符用于地址，将得到存储在这个地址中的值；但将它用于两个数字时，得到的将是它们的乘积。</p><p></p>
+<p></p><p>&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbsp&amp;nbspC++允许将运算符重载扩展到用户自定义的类型，如，允许使用+将两个对象相加，编译器将根据操作数的数目和类型决定使用哪种加法定义。运算符重载使代码看起来更自然，在C++中将两个数组相加是一种很常见的运算，如 </p><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)</div><div class="line">      sum[i] = one[i] + two[i];</div></pre></td></tr></table></figure><p></p>
+<p>在C++中可以定义一个表示数组的类，并重载+运算符。则上述代码可用下列代码来表示：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sum = one + two;</div></pre></td></tr></table></figure>
+<p>要重载运算符，需使用运算符函数，格式：<font color="ff7079" face="bold">operator op(参数列表)</font></p>
+<blockquote>
+<p>说明：如operator+() 重载+运算符，operator*()重载*运算符。 op必须是有效的运算符，如不能有operator @()函数，因为C++中没有@运算符等。</p>
+</blockquote>
+<p>案例：定义一个HBTime类，获取两个HBTime对象相加的值。</p>
+<blockquote>
+<p>先来写一个普通的方式,通过定义一个函数来求解两个对象和的值</p>
+</blockquote>
+ <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"> <span class="keyword">class</span> HBTime &#123;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="keyword">int</span> hour = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> minute = <span class="number">0</span>;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">    </div><div class="line">    <span class="comment">/// 构造函数</span></div><div class="line">    HBTime();</div><div class="line">    HBTime(<span class="keyword">int</span> hour,<span class="keyword">int</span> minute);</div><div class="line">    </div><div class="line">    <span class="comment">/// 析构函数</span></div><div class="line">    ~HBTime();</div><div class="line">    </div><div class="line">    <span class="comment">/// 添加小时</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addHour</span><span class="params">(<span class="keyword">int</span> hour)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 添加分钟</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addMinute</span><span class="params">(<span class="keyword">int</span> minute)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 显示时间</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">showTime</span><span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 获取小时</span></div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getHour</span><span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 获取分钟</span></div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMinute</span><span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 重置时间</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">resetTime</span><span class="params">(<span class="keyword">int</span> hour,<span class="keyword">int</span> minute)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/// 求和时间</span></div><div class="line">    <span class="function">HBTime <span class="title">sumTime</span><span class="params">(<span class="keyword">const</span> HBTime &amp;time)</span> <span class="keyword">const</span></span>;</div><div class="line">    </div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p> 在这里简单声明了两个构造函数，显示声明默认的构造函数<font color="ff7079">HBTime()</font>(<font color="8c8c8c">如果没有声明构造函数，C++编译器会自动默认生成一个构造函数</font>)和自定义的构造函数<font color="ff7079">HBTime(int hour,int minute)</font>,同时声明了求和函数来计算两个Time对象的和计算。下面看看各函数的定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">HBTime::HBTime() &#123;</div><div class="line">    hour = <span class="number">0</span>;</div><div class="line">    minute = <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">HBTime::HBTime(<span class="keyword">int</span> hour,<span class="keyword">int</span> minute)&#123;</div><div class="line">    resetTime(hour, minute);</div><div class="line">&#125;</div><div class="line"></div><div class="line">HBTime::~HBTime() &#123;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">HBTime HBTime::sumTime(<span class="keyword">const</span> HBTime &amp;time) <span class="keyword">const</span> &#123;</div><div class="line">    HBTime tempTime = HBTime();</div><div class="line">    tempTime.minute = (minute + time.minute) % <span class="number">60</span>;</div><div class="line">    tempTime.hour = ((minute + time.minute) / <span class="number">60</span> + hour + time.hour) % <span class="number">24</span>;</div><div class="line">    <span class="keyword">return</span> tempTime;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> HBTime::addHour(<span class="keyword">int</span> hour) &#123;</div><div class="line">    <span class="keyword">this</span>-&gt;hour = (<span class="keyword">this</span>-&gt;hour + hour) % <span class="number">24</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> HBTime::addMinute(<span class="keyword">int</span> minute)&#123;</div><div class="line">    addHour((minute + <span class="keyword">this</span>-&gt;minute)/<span class="number">60</span>);</div><div class="line">    <span class="keyword">this</span>-&gt;minute = (<span class="keyword">this</span>-&gt;minute + minute) % <span class="number">60</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> HBTime::showTime() <span class="keyword">const</span> &#123;</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; hour &lt;&lt; <span class="string">"时"</span> &lt;&lt; minute &lt;&lt; <span class="string">"分"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">int</span> HBTime::getHour() <span class="keyword">const</span>&#123;</div><div class="line">    <span class="keyword">return</span> hour;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">int</span> HBTime::getMinute() <span class="keyword">const</span> &#123;</div><div class="line">    <span class="keyword">return</span> minute;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">void</span> HBTime::resetTime(<span class="keyword">int</span> hour,<span class="keyword">int</span> minute) &#123;</div><div class="line">    <span class="keyword">if</span> (hour &lt; <span class="number">24</span> &amp;&amp; hour &gt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">this</span>-&gt;hour = hour;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>-&gt;hour = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (minute &lt; <span class="number">60</span> &amp;&amp; minute &gt; <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">this</span>-&gt;minute = minute;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>-&gt;minute = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接下来，定义两个HBTime对象来看一下执行结果</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span> </span>&#123;</div><div class="line">    HBTime time1 = HBTime(<span class="number">18</span>, <span class="number">25</span>);</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Time1: --- "</span>;</div><div class="line">    time1.showTime();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    </div><div class="line">    HBTime time2 = HBTime(<span class="number">2</span>, <span class="number">20</span>);</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Time2: --- "</span>;</div><div class="line">    time2.showTime();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    </div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"求和结果: --- "</span>;</div><div class="line">    time1.sumTime(time2).showTime();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：<br><img src="../../images/C++_overLoad_1.png" alt=""></p>
+<blockquote>
+<p>注意： 在sumTime函数中将参数声明为引用的目的是为了提高效率，如果按值传递HBTime对象的话，C++编译器会开辟一个临时的空间并将实参的值赋给所开辟的临时空间，代码的功能相同；而引用直接取的实参的值，速度更快，更节省内存空间，避免了不必要的内存开销，提高了效率。但是，返回值不能是引用，函数在求和之后创建一个新的HBTime对象来表示两个HBTime对象的和，这个对象是局部的变量，返回改对象将会创建对象的副本让调用函数可以使用它；如果返回的是HBTime引用的话，则引用的是该函数内的局部变量，在函数执行结束时会释放掉该对象，因此该引用指向的是实际上已经被释放掉的对象。</p>
+</blockquote>
+<p>下面采取运算符重载的方式来替换上面的求和函数 —— <font color="ff7079"> 重载+运算符 </font><br>在HBTime.hpp中声明方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span>:</div><div class="line">   HBTime <span class="keyword">operator</span> + (<span class="keyword">const</span> HBTime &amp;time) <span class="keyword">const</span>;</div></pre></td></tr></table></figure>
+<p>HBTime.cpp定义为：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">HBTime HBTime::<span class="keyword">operator</span>+(<span class="keyword">const</span> HBTime &amp;time) <span class="keyword">const</span> &#123;</div><div class="line">    HBTime tempTime = HBTime();</div><div class="line">    tempTime.minute = (minute + time.minute) % <span class="number">60</span>;</div><div class="line">    tempTime.hour = ((minute + time.minute) / <span class="number">60</span> + hour + time.hour) % <span class="number">24</span>;</div><div class="line">    <span class="keyword">return</span> tempTime;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span> </span>&#123;</div><div class="line">    HBTime time3 = HBTime(<span class="number">20</span>,<span class="number">36</span>);</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Time3: --- "</span>;</div><div class="line">    time3.showTime();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    </div><div class="line">    HBTime time4 = HBTime(<span class="number">12</span>,<span class="number">18</span>);</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Time4: --- "</span>;</div><div class="line">    time4.showTime();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    </div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"time3 + time4: --- "</span>;</div><div class="line">    (time3+time4).showTime();</div><div class="line">    </div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：<br><img src="../../images/C++_overLoad_2.png" alt=""><br>和sumTime一样，operator+()也是HBTime对象调用的，它将第二个HBTime对象作为参数，并返回一个HBTime对象；因此可以以sumTime()哪种方式来调用operator+()方法：</p>
+<p><font color="ff7079"> sum = time3.operator+(time4);<br></font>重载了+运算符后就可以直接将两个对象相加了。</p>
+<blockquote>
+<p>注意： 两种方法都将调用operator+()方法，在运算符表示法中，运算符左侧的对象(这里是time3)是调用对象，运算符右边的对象(这里是time4)是作为参数被传递的对象。</p>
+</blockquote>
+<p>提问：可以将两个以上的对象相加吗？答案是肯定的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time4 = time1 + time2 + time3;</div></pre></td></tr></table></figure>
+<p>由于+是自左向右结合，因此上述语句首先被转换为：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time4 = time1.opertator + (time2 + time3);</div></pre></td></tr></table></figure>
+<p>然后函数参数本身被转换为一个函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time4 = time1.<span class="keyword">operator</span> + (time2.<span class="keyword">operator</span> + (time3));</div></pre></td></tr></table></figure>
+<h3 id="1-2-运算符重载注意事项"><a href="#1-2-运算符重载注意事项" class="headerlink" title="1.2 运算符重载注意事项"></a>1.2 运算符重载注意事项</h3><p>多数C++运算符都可以重载，重载的运算符(有些例外的情况)不必是成员函数,但必须有一个操作数是用户自定义的类型。</p>
+<ol>
+<li>重载后的运算符必须至少有一个是用户自定义的类型，防止用户为标准类型重载运算符。</li>
+<li>使用运算符重载不能违反运算符原来的句法规则，不能修改运算符的优先级。</li>
+<li>不能创建新运算符。</li>
+<li><p>不能重载下列运算符。      </p>
+<ul>
+<li>sizeof: sizeof运算符</li>
+<li>.:成员运算符。</li>
+<li>.*:成员指针运算符。</li>
+<li>::：作用域解析运算符。</li>
+<li>?:：条件运算符。</li>
+<li>typeid: 一个RTTI运算符。</li>
+<li>const_cast:强制类型转换符。</li>
+<li>dynamic_cast:强制类型转换符。</li>
+<li>reinterpret_cast:强制类型转换符。</li>
+<li>static_cast:强制类型转换符。</li>
+</ul>
+</li>
+<li><p>大多数运算符都能通过成员或非成员函数进行重载，但下列运算符只能通过成员函数进行重载。</p>
+<ul>
+<li>=：赋值运算符。</li>
+<li>():函数调用运算符。</li>
+<li>[]:下标运算符。</li>
+<li>-&gt;:通过指针访问类成员的运算符。</li>
+</ul>
+</li>
+</ol>
+<p>有时候对于HBTime类有这样的需求：求两个时间的差或者将时间乘以某个因子，这时需要对 - 和 * 重载。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">HBTime <span class="keyword">operator</span> - (<span class="keyword">const</span> HBTime &amp;time) <span class="keyword">const</span>;</div><div class="line">HBTime <span class="keyword">operator</span> * (<span class="keyword">double</span> mult) <span class="keyword">const</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">HBTime HBTime::<span class="keyword">operator</span> - (<span class="keyword">const</span> HBTime &amp;time) <span class="keyword">const</span> &#123;</div><div class="line">    HBTime tempTime;</div><div class="line">    <span class="keyword">int</span> totalMinutes1 = time.minute + time.hour * <span class="number">60</span>;</div><div class="line">    <span class="keyword">int</span> totalMinutes2 = minute + hour * <span class="number">60</span>;</div><div class="line">    </div><div class="line">    <span class="keyword">int</span> diffMinutes = <span class="built_in">abs</span>(totalMinutes2 - totalMinutes1);</div><div class="line">    tempTime.hour = (diffMinutes / <span class="number">60</span>) % <span class="number">24</span>;</div><div class="line">    tempTime.minute = diffMinutes % <span class="number">60</span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> tempTime;</div><div class="line">&#125;</div><div class="line"></div><div class="line">HBTime HBTime::<span class="keyword">operator</span> * (<span class="keyword">double</span> mult) <span class="keyword">const</span> &#123;</div><div class="line">    HBTime time;</div><div class="line">    <span class="keyword">long</span> totalMinutes = hour * <span class="number">60</span> * mult + minute * mult;</div><div class="line">    time.hour = (totalMinutes / <span class="number">60</span>) % <span class="number">24</span>;</div><div class="line">    time.minute = totalMinutes % <span class="number">60</span>;</div><div class="line">    <span class="keyword">return</span> time;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>分析：上述的重载的 HBTime operator <em> (double mult) const;只能以这种方式调用： timeA = timeB </em> 3.0; 运算符的左侧为对象，右侧为一个数值，这样就限制该运算符的使用方式。如果用户写成timeA = 3.0 * timeB; 编译器立马会报错。</p>
+</blockquote>
+<p>针对上述问题，解决方案可以采用非成员函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">HBTime <span class="keyword">operator</span> * (<span class="keyword">double</span> m, <span class="keyword">const</span> HBTime &amp;time);</div></pre></td></tr></table></figure>
+<p>但是这样又会引发一个新的问题：常规非成员函数不能访问类的私有数据，然而，有一类特殊的非成员函数可以访问类的私有成员，这就是友元函数。</p>
+<p>–</p>
+<h2 id="2-友元函数"><a href="#2-友元函数" class="headerlink" title="2. 友元函数"></a>2. 友元函数</h2><p>创建友元函数的第一步是将其原型放在类的声明中，并在其前面加上关键字friend：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">friend</span> HBTime <span class="keyword">operator</span> * (<span class="keyword">double</span> m, <span class="keyword">const</span> Time &amp;t);</div></pre></td></tr></table></figure>
+<p>friend 关键字的作用是说明：虽然operator*()函数是在类中声明的，但它不是成员函数，因此不能使用成员运算符来调用；虽然operator*()不是成员函数，但它与成员函数的访问权限相同。</p>
+<p>第二步是编写函数定义，因为他不是成员函数，所以不能使用HBTime::限定符，另外不要在定义中使用关键字friend,定义如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">HBTime <span class="keyword">operator</span> * (<span class="keyword">double</span> m, <span class="keyword">const</span> HBTime &amp;time) &#123;</div><div class="line">     <span class="keyword">return</span> time * m;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打印追踪执行过程：</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="../../images/C++friend_func_1.png" alt=""></h2><p><img src="../../images/C++friend_func_2.png" alt=""></p>
+<p>运行结果：<br><img src="../../images/C++friend_func_3.png" alt=""></p>
+<p>这样编译器允许 5 <em> time表达式了，而且无论是 time </em> 5 还是 5 * time，它们的执行都一样，达到最终的目的。</p>
+<blockquote>
+<p>注意： </p>
+<ol>
+<li><p>只有类声明可以决定哪一个函数是友元。</p>
+</li>
+<li><p>类方法和友元只是表达类接口的两种不同机制。</p>
+</li>
+<li><p>只有在类的声明中才能使用friend关键字。除非函数定义也是原型，否则不能在该函数定义中使用该关键字。</p>
+</li>
+</ol>
+</blockquote>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2017/05/23/technology/C++运算符重载和友元函数/" data-id="cj345ttc30004iuuld25k4c61" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2017/05/22/life/测试2/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">测试2</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/23/technology/C++运算符重载和友元函数/" class="thumbnail">
+    
+    
+        <span style="background-image:url(../../images/C++_overLoad_1.png)" alt="C++运算符重载和友元函数" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2017/05/23/technology/C++运算符重载和友元函数/" class="title">C++运算符重载和友元函数</a></p>
+                            <p class="item-date"><time datetime="2017-05-23T02:11:01.000Z" itemprop="datePublished">2017-05-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/22/life/测试2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/life/">生活</a></p>
+                            <p class="item-title"><a href="/2017/05/22/life/测试2/" class="title">测试2</a></p>
+                            <p class="item-date"><time datetime="2017-05-22T08:10:48.000Z" itemprop="datePublished">2017-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/22/others/测试1/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/05/22/others/测试1/" class="title">测试1.md</a></p>
+                            <p class="item-date"><time datetime="2017-05-22T08:10:38.000Z" itemprop="datePublished">2017-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/16/others/聚范社区文档/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/jufan_logo.png)" alt="聚范社区文档" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/others/">其他</a></p>
+                            <p class="item-title"><a href="/2017/05/16/others/聚范社区文档/" class="title">聚范社区文档</a></p>
+                            <p class="item-date"><time datetime="2017-05-16T02:15:54.000Z" itemprop="datePublished">2017-05-16</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2017 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2017/05/23/technology/C++运算符重载和友元函数/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
