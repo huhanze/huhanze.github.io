@@ -1019,7 +1019,7 @@ code {
 }
 .article-summary .article-summary-inner .article-title {
   margin-bottom: 10px;
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 400;
   line-height: 1.5em;
   word-wrap: break-word;
@@ -1034,7 +1034,7 @@ code {
 .article-summary .article-summary-inner .article-excerpt {
   position: relative;
   color: #aaa;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.6em;
   overflow: hidden;
   height: 6.4em;
