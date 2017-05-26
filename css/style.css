@@ -1057,7 +1057,7 @@ code {
 }
 .article-title {
   text-decoration: none;
-  font-size: 20px;
+  font-size: 28px;
   letter-spacing: -1px;
   color: #555;
   line-height: 1.3em;
@@ -1182,7 +1182,7 @@ a.article-title:hover {
   top: 0;
   left: 0;
   color: #ccc;
-  font-size: 32px;
+  font-size: 22px;
   content: "\f10d";
   position: absolute;
   text-align: center;
@@ -1342,7 +1342,7 @@ a.article-title:hover {
 .article-share-facebook:before,
 .article-share-pinterest:before,
 .article-share-google:before {
-  font-size: 20px;
+  font-size: 16px;
   font-family: FontAwesome;
 }
 .article-share-twitter:hover,
@@ -1419,7 +1419,7 @@ a.article-title:hover {
   top: 50%;
   width: 40px;
   height: 36px;
-  font-size: 36px;
+  font-size: 26px;
   line-height: 36px;
   margin-top: -18px;
   position: absolute;
