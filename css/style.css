@@ -223,6 +223,7 @@ body,
 body {
   background: #eaeaea;
   font: 14px "Titillium Web", "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+  font-size: 0.8em;
   -webkit-text-size-adjust: 100%;
 }
 code {
