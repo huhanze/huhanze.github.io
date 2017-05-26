@@ -1034,7 +1034,7 @@ code {
 .article-summary .article-summary-inner .article-excerpt {
   position: relative;
   color: #aaa;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.6em;
   overflow: hidden;
   height: 6.4em;
@@ -1057,7 +1057,7 @@ code {
 }
 .article-title {
   text-decoration: none;
-  font-size: 38px;
+  font-size: 20px;
   letter-spacing: -1px;
   color: #555;
   line-height: 1.3em;
