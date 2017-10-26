@@ -3,19 +3,23 @@
 <head>
     <meta charset="utf-8">
     
-    <title>C++动态内存分配 | Dylan.Hu&#39;Memory</title>
+    <title>(你会吗?)基本测试题-链表 | Dylan.Hu&#39;Memory</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-        <meta name="keywords" content="" />
+        <meta name="keywords" content="算法,链表,C语言" />
     
-    <meta property="og:type" content="article">
-<meta property="og:title" content="C++动态内存分配">
-<meta property="og:url" content="http://yoursite.com/2017/06/01/technology/C++动态内存分配/index.html">
+    <meta name="description" content="题目：请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。 算法思想：  遍历链表，求出链表的长度n，如果n &amp;lt; k ,则不存在这样的节点，    如果n == k 则链表的第一个节点list，如果n &amp;gt; k 则所求的位置为 n - k    此时拿到第n-k的位置的节点返回即可。    时">
+<meta name="keywords" content="算法,链表,C语言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(你会吗?)基本测试题-链表">
+<meta property="og:url" content="http://yoursite.com/2012/09/12/你会吗-基本测试题-链表/index.html">
 <meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="题目：请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。 算法思想：  遍历链表，求出链表的长度n，如果n &amp;lt; k ,则不存在这样的节点，    如果n == k 则链表的第一个节点list，如果n &amp;gt; k 则所求的位置为 n - k    此时拿到第n-k的位置的节点返回即可。    时">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-07-03T08:45:57.000Z">
+<meta property="og:updated_time" content="2017-10-26T08:17:20.497Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++动态内存分配">
+<meta name="twitter:title" content="(你会吗?)基本测试题-链表">
+<meta name="twitter:description" content="题目：请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。 算法思想：  遍历链表，求出链表的长度n，如果n &amp;lt; k ,则不存在这样的节点，    如果n == k 则链表的第一个节点list，如果n &amp;gt; k 则所求的位置为 n - k    此时拿到第n-k的位置的节点返回即可。    时">
     
 
     
@@ -126,18 +130,18 @@
                         <div class="main-body-header">
     <h1 class="header">
     
-    未分类
+    <a class="page-title-link" href="/categories/technology/">技术</a>
     </h1>
 </div>
                         <div class="main-body-content">
-                            <article id="post-technology/C++动态内存分配" class="article article-single article-type-post" itemscope itemprop="blogPost">
+                            <article id="post-你会吗-基本测试题-链表" class="article article-single article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
             <header class="article-header">
                 
     
         <h1 class="article-title" itemprop="name">
-        C++动态内存分配
+        (你会吗?)基本测试题-链表
         </h1>
     
 
@@ -145,22 +149,44 @@
         
         
             <div class="article-subtitle">
-                <a href="/2017/06/01/technology/C++动态内存分配/" class="article-date">
-    <time datetime="2017-06-01T01:55:31.000Z" itemprop="datePublished">2017-06-01</time>
+                <a href="/2012/09/12/你会吗-基本测试题-链表/" class="article-date">
+    <time datetime="2012-09-12T07:43:57.000Z" itemprop="datePublished">2012-09-12</time>
 </a>
                 
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C语言/">C语言</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法/">算法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/链表/">链表</a></li></ul>
+
             </div>
         
         
         <div class="article-entry" itemprop="articleBody">
-            
+            <h3 id="题目："><a href="#题目：" class="headerlink" title="题目："></a>题目：</h3><h4 id="请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。"><a href="#请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。" class="headerlink" title="请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。"></a><font color="sky-blue">请写一算法，该算法用尽可能高的时间效率找到由list所指的线性链表的倒数第k个链节点，若找到这样的节点，算法给出该节点的地址，否则算法给出NULL。</font></h4><blockquote>
+<p>算法思想：<br> <font color="orange"> 遍历链表，求出链表的长度n，如果n &lt; k ,则不存在这样的节点，<br>    如果n == k 则链表的第一个节点list，如果n &gt; k 则所求的位置为 n - k<br>    此时拿到第n-k的位置的节点返回即可。<br>    时间复杂度：<1> 遍历链表的长度执行了 n次 O(n)<br>              <2> 查找最终的位置，执行了 n - k次 O(n - k)<br> 那么该时间复杂度为O(n); </2></1></font></p>
+</blockquote>
+<hr>
+ <font color="red"> 上代码 </font>
+
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> Node &#123;</div><div class="line">    <span class="keyword">int</span> data;</div><div class="line">    <span class="keyword">struct</span> Node *next;</div><div class="line">&#125; LNode, *LinkList;</div><div class="line"></div><div class="line"> <span class="function">LinkList <span class="title">find</span><span class="params">(LinkList <span class="built_in">list</span>, <span class="keyword">int</span> k)</span></span></div><div class="line">&#123;</div><div class="line">    LinkList p = <span class="built_in">list</span>;</div><div class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</div><div class="line">    </div><div class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</div><div class="line">        n++;</div><div class="line">        p = p -&gt; next;</div><div class="line">    &#125;</div><div class="line">    p = <span class="built_in">list</span>;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (n &lt; k) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (n == k) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="built_in">list</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (n &gt; k) &#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n - k; i++) &#123;</div><div class="line">            p = p -&gt; next;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="如果不允许使用链表的长度，不得使用除LinkList指针变量和控制变量以外的变量。"><a href="#如果不允许使用链表的长度，不得使用除LinkList指针变量和控制变量以外的变量。" class="headerlink" title="如果不允许使用链表的长度，不得使用除LinkList指针变量和控制变量以外的变量。"></a><font color="ff0079">如果不允许使用链表的长度，不得使用除LinkList指针变量和控制变量以外的变量。</font></h3><blockquote>
+<p>思路：</p>
+<ol>
+<li><font color="orange"> 定义两个指针变量 LinkList r,p; 遍历链表当r到达第k的位置时，如果r == null ,则 不存在k这个位置，如果r -&gt; next == null,则链表的头结点为所求的节点；</font>
+</li>
+<li><font color="orange">如果r != null &amp;&amp; r -&gt; next != null, 此时p从头节点开始遍历，当r到达链表结尾时，p指向的节点数据为所求节点数据。</font>
+
+</li>
+</ol>
+<p>算法复杂度同样为O(n)。</p>
+</blockquote>
+<font color="red"> 代码 </font>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function">LinkList <span class="title">find2</span><span class="params">(LinkList <span class="built_in">list</span>, <span class="keyword">int</span> k)</span></span></div><div class="line">&#123;</div><div class="line">    LinkList p = <span class="literal">NULL</span>,r = <span class="built_in">list</span>;</div><div class="line">    <span class="keyword">int</span> i;</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= k &amp;&amp; r != <span class="literal">NULL</span>; i++) &#123;</div><div class="line">        r = r -&gt; next;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (i &lt; k) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (i == k) &#123;</div><div class="line">        <span class="keyword">return</span> r;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    p = <span class="built_in">list</span>;</div><div class="line">    <span class="keyword">while</span> (r != <span class="literal">NULL</span>) &#123;</div><div class="line">        r = r -&gt; next;</div><div class="line">        p = p -&gt; next;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
         </div>
         <footer class="article-footer">
             
 
 
 
-    <a data-url="http://yoursite.com/2017/06/01/technology/C++动态内存分配/" data-id="cj9874pjc000a57yn1jbyzzdm" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://yoursite.com/2012/09/12/你会吗-基本测试题-链表/" data-id="cj9874phb000057ynfxq9xsfh" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         $('body').on('click', function() {
@@ -281,22 +307,16 @@
         
 <nav id="article-nav">
     
-        <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" id="article-nav-newer" class="article-nav-link-wrap">
+        <a href="/2013/05/23/technology/C++运算符重载和友元函数/" id="article-nav-newer" class="article-nav-link-wrap">
         <strong class="article-nav-caption">下一篇</strong>
         <p class="article-nav-title">
         
-            Xcode中引入cocos2d-x
+            C++运算符重载和友元函数
         
         </p>
         <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
     </a>
     
-    
-        <a href="/2017/05/22/life/测试2/" id="article-nav-older" class="article-nav-link-wrap">
-        <strong class="article-nav-caption">上一篇</strong>
-        <p class="article-nav-title">测试2</p>
-        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
-        </a>
     
 </nav>
 
@@ -496,7 +516,7 @@
     var disqus_shortname = 'hexo-theme-hueman';
     
     
-    var disqus_url = 'http://yoursite.com/2017/06/01/technology/C++动态内存分配/';
+    var disqus_url = 'http://yoursite.com/2012/09/12/你会吗-基本测试题-链表/';
     
     (function() {
     var dsq = document.createElement('script');
