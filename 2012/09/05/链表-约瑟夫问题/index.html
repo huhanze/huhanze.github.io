@@ -17,7 +17,7 @@
 <meta property="og:description" content="约瑟夫问题已知n个人(不妨以编号1,2,3,…,n分别表示）围坐在一张圆桌周围。从编号为k的人开始报数，数到m的那个人出列； 他的下一个人又从1开始报数，数到m的人又出列，如此重复下去，知道所有人全部出列。    算法思想：此问题可以借助循环列表来解决，将围在圆桌的n个人当做循环链表，每一次数到m就是链表的查找过程，出列的那个人就相当于从链表中删除一个节点，如循环下去直至整个链表为空为止。 1️⃣">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/algorithm_josephus.png">
-<meta property="og:updated_time" content="2017-10-27T06:50:05.216Z">
+<meta property="og:updated_time" content="2017-10-27T06:55:56.775Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="链表-约瑟夫问题">
 <meta name="twitter:description" content="约瑟夫问题已知n个人(不妨以编号1,2,3,…,n分别表示）围坐在一张圆桌周围。从编号为k的人开始报数，数到m的那个人出列； 他的下一个人又从1开始报数，数到m的人又出列，如此重复下去，知道所有人全部出列。    算法思想：此问题可以借助循环列表来解决，将围在圆桌的n个人当做循环链表，每一次数到m就是链表的查找过程，出列的那个人就相当于从链表中删除一个节点，如循环下去直至整个链表为空为止。 1️⃣">
@@ -166,9 +166,9 @@
 
 <blockquote>
 <p>算法思想：<font color="red">此问题可以借助循环列表来解决，将围在圆桌的n个人当做循环链表，每一次数到m就是链表的查找过程，出列的那个人就相当于从链表中删除一个节点，如循环下去直至整个链表为空为止。</font></p>
-<font color="ff0079">1️⃣ 创建一个循环链表。 </font>
+<font color="ff0079">1️⃣ 创建一个循环链表。 </font> 
 
-<font color="ff0079">2️⃣ 查找第K个位置的节点。 </font>
+<font color="ff0079">2️⃣ 查找第K个位置的节点。 </font> 
 
 <font color="ff0079">3️⃣ 从第K个位置开始计数到m时停止遍历，记录下此节点并从链表中删除，从被删除节点的下一个元素开始继续，直至所有节点都被删除… </font>
 
@@ -184,7 +184,7 @@
 
 
 
-    <a data-url="http://yoursite.com/2012/09/05/链表-约瑟夫问题/" data-id="cj99jg9ue0004q7yn4unre8q7" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://yoursite.com/2012/09/05/链表-约瑟夫问题/" data-id="cj99jno0l0001t6ynlasrzw4s" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         $('body').on('click', function() {
