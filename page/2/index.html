@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     
-    <title>标签：: 聚范 | Dylan.Hu&#39;Memory</title>
+    <title>Dylan.Hu&#39;Memory</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta property="og:type" content="website">
 <meta property="og:title" content="Dylan.Hu&#39;Memory">
-<meta property="og:url" content="http://yoursite.com/tags/聚范/index.html">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="Dylan.Hu&#39;Memory">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
@@ -123,7 +123,7 @@
                         <div class="main-body-header">
     <h1 class="header">
     
-    <i class="icon fa fa-tag"></i>标签：: <em>聚范</em>
+    <em class="page-title-link" data-url="home">主页</em>
     </h1>
 </div>
                         <div class="main-body-content">
@@ -135,7 +135,7 @@
         
         <section class="archives-wrap">
             <div class="archive-year-wrap">
-                <a href="/archives/2017" class="archive-year"><i class="icon fa fa-calendar-o"></i>2017</a>
+                <a href="/archives/2012" class="archive-year"><i class="icon fa fa-calendar-o"></i>2012</a>
             </div>
             <div class="archives">
     
@@ -146,17 +146,17 @@
         <article class="article article-summary">
     <div class="article-summary-inner">
         
-        <a href="/2017/05/16/others/聚范社区文档/" class="thumbnail">
+        <a href="/2012/09/05/链表-约瑟夫问题/" class="thumbnail">
     
     
-        <span style="background-image:url(/images/jufan_logo.png)" alt="聚范社区文档" class="thumbnail-image"></span>
+        <span style="background-image:url(/images/algorithm_josephus.png)" alt="链表-约瑟夫问题" class="thumbnail-image"></span>
     
     
         
 <span class="comment-counter">
     <i class="fa fa-comments-o"></i>
     
-        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2017/05/16/others/聚范社区文档/">0</span>
+        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2012/09/05/链表-约瑟夫问题/">0</span>
     
 </span>
 
@@ -166,25 +166,77 @@
         
         <div class="article-meta">
             <p class="category">
-            <a class="article-category-link" href="/categories/others/">其他</a>
+            <a class="article-category-link" href="/categories/technology/">技术</a>
             </p>
-            <p class="date"><time datetime="2017-05-16T02:15:54.000Z" itemprop="datePublished">2017-05-16</time></p>
+            <p class="date"><time datetime="2012-09-05T01:58:18.000Z" itemprop="datePublished">2012-09-05</time></p>
         </div>
         
     
         <h1 class="article-title" itemprop="name">
-        <a href="/2017/05/16/others/聚范社区文档/">聚范社区文档</a>
+        <a href="/2012/09/05/链表-约瑟夫问题/">链表-约瑟夫问题</a>
         </h1>
     
 
         <p class="article-excerpt">
-            聚范社区文档2.0.1 版本1. 圈子小喇叭需求：圈子页面增加小喇嘛入口，记录当前圈子用户送礼情况。
-分析：
+            约瑟夫问题已知n个人(不妨以编号1,2,3,…,n分别表示）围坐在一张圆桌周围。从编号为k的人开始报数，数到m的那个人出列； 他的下一个人又从1开始报数，数到m的人又出列，如此重复下去，知道所有人全部出列。
 
-: 页面可采用UITabView，自定义UITableViewCell;由于每个Cell的控件保持不变，送礼区根据设备动态调整宽度，这里采用AutoLayout来布局子控件较为方便。
 
-准备工作：
-创建控制器 - BaseTableViewController 继承自BaseTableV
+
+算法思想：此问题可以借助循环列表来解决，将围在圆桌的n个人当做循环链表，每一次数到m就是链表的查找过程，出列的那个人就相当于从链表中删除一个节点，如循环下去直至整个链表为空为止。
+1️⃣
+        </p>
+    </div>
+</article>
+    
+
+    
+    
+    
+    
+        <article class="article article-summary">
+    <div class="article-summary-inner">
+        
+        <a href="/2012/09/03/链表基本实现-C语言/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/LinkList_1.png)" alt="链表基本实现-C语言" class="thumbnail-image"></span>
+    
+    
+        
+<span class="comment-counter">
+    <i class="fa fa-comments-o"></i>
+    
+        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2012/09/03/链表基本实现-C语言/">0</span>
+    
+</span>
+
+    
+</a>
+
+        
+        <div class="article-meta">
+            <p class="category">
+            <a class="article-category-link" href="/categories/technology/">技术</a>
+            </p>
+            <p class="date"><time datetime="2012-09-03T08:36:38.000Z" itemprop="datePublished">2012-09-03</time></p>
+        </div>
+        
+    
+        <h1 class="article-title" itemprop="name">
+        <a href="/2012/09/03/链表基本实现-C语言/">链表基本实现-C语言</a>
+        </h1>
+    
+
+        <p class="article-excerpt">
+            链表基本操作 - C语言实现 节点定义：1234typedef struct Node &#123;    int data;   // 数据域    struct Node *next;  // 指针域，指向链表当前节点的下一个节点&#125; LNode, *LinkList;
+链表的基本操作
+
+链表的创建: 
+
+
+
+
+1234567891011121314151617181920212223
         </p>
     </div>
 </article>
@@ -195,6 +247,11 @@
 
     </div></section>
 
+
+    <nav id="page-nav">
+        <span class="pages">第 2 页，共 2 页</span>
+        <a class="extend prev" rel="prev" href="/">&laquo;</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
 
 
                         </div>
