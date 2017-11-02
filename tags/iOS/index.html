@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     
-    <title>Dylan.Hu&#39;Memory</title>
+    <title>标签：: iOS | Dylan.Hu&#39;Memory</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta property="og:type" content="website">
 <meta property="og:title" content="Dylan.Hu&#39;Memory">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta property="og:url" content="http://yoursite.com/tags/iOS/index.html">
 <meta property="og:site_name" content="Dylan.Hu&#39;Memory">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
@@ -123,7 +123,7 @@
                         <div class="main-body-header">
     <h1 class="header">
     
-    <em class="page-title-link" data-url="home">主页</em>
+    <i class="icon fa fa-tag"></i>标签：: <em>iOS</em>
     </h1>
 </div>
                         <div class="main-body-content">
@@ -135,7 +135,7 @@
         
         <section class="archives-wrap">
             <div class="archive-year-wrap">
-                <a href="/archives/2012" class="archive-year"><i class="icon fa fa-calendar-o"></i>2012</a>
+                <a href="/archives/2015" class="archive-year"><i class="icon fa fa-calendar-o"></i>2015</a>
             </div>
             <div class="archives">
     
@@ -146,17 +146,17 @@
         <article class="article article-summary">
     <div class="article-summary-inner">
         
-        <a href="/2012/09/05/链表-约瑟夫问题/" class="thumbnail">
+        <a href="/2015/10/13/获取设备通讯录-iOS/" class="thumbnail">
     
     
-        <span style="background-image:url(/images/algorithm_josephus.png)" alt="链表-约瑟夫问题" class="thumbnail-image"></span>
+        <span class="thumbnail-image thumbnail-none"></span>
     
     
         
 <span class="comment-counter">
     <i class="fa fa-comments-o"></i>
     
-        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2012/09/05/链表-约瑟夫问题/">0</span>
+        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2015/10/13/获取设备通讯录-iOS/">0</span>
     
 </span>
 
@@ -166,77 +166,22 @@
         
         <div class="article-meta">
             <p class="category">
-            <a class="article-category-link" href="/categories/technology/">技术</a>
+            
             </p>
-            <p class="date"><time datetime="2012-09-05T01:58:18.000Z" itemprop="datePublished">2012-09-05</time></p>
+            <p class="date"><time datetime="2015-10-13T08:42:31.000Z" itemprop="datePublished">2015-10-13</time></p>
         </div>
         
     
         <h1 class="article-title" itemprop="name">
-        <a href="/2012/09/05/链表-约瑟夫问题/">链表-约瑟夫问题</a>
+        <a href="/2015/10/13/获取设备通讯录-iOS/">获取设备通讯录-iOS</a>
         </h1>
     
 
         <p class="article-excerpt">
-            约瑟夫问题已知n个人(不妨以编号1,2,3,…,n分别表示）围坐在一张圆桌周围。从编号为k的人开始报数，数到m的那个人出列； 他的下一个人又从1开始报数，数到m的人又出列，如此重复下去，知道所有人全部出列。
-
-
-
-算法思想：此问题可以借助循环列表来解决，将围在圆桌的n个人当做循环链表，每一次数到m就是链表的查找过程，出列的那个人就相当于从链表中删除一个节点，如循环下去直至整个链表为空为止。
-1️⃣
-        </p>
-    </div>
-</article>
-    
-
-    
-    
-    
-    
-        <article class="article article-summary">
-    <div class="article-summary-inner">
-        
-        <a href="/2012/09/03/链表基本实现-C语言/" class="thumbnail">
-    
-    
-        <span style="background-image:url(/images/LinkList_1.png)" alt="链表基本实现-C语言" class="thumbnail-image"></span>
-    
-    
-        
-<span class="comment-counter">
-    <i class="fa fa-comments-o"></i>
-    
-        <span class="disqus-comment-count" data-disqus-identifier="" data-disqus-url="http://yoursite.com/2012/09/03/链表基本实现-C语言/">0</span>
-    
-</span>
-
-    
-</a>
-
-        
-        <div class="article-meta">
-            <p class="category">
-            <a class="article-category-link" href="/categories/technology/">技术</a>
-            </p>
-            <p class="date"><time datetime="2012-09-03T08:36:38.000Z" itemprop="datePublished">2012-09-03</time></p>
-        </div>
-        
-    
-        <h1 class="article-title" itemprop="name">
-        <a href="/2012/09/03/链表基本实现-C语言/">链表基本实现-C语言</a>
-        </h1>
-    
-
-        <p class="article-excerpt">
-            链表基本操作 - C语言实现 节点定义：1234typedef struct Node &#123;    int data;   // 数据域    struct Node *next;  // 指针域，指向链表当前节点的下一个节点&#125; LNode, *LinkList;
-链表的基本操作
-
-链表的创建: 
-
-
-
-
-1234567891011121314151617181920212223
+            iOS获取设备通讯录有时候为了项目的推广，通过获取设备的通讯录是一种不错的手段，那么下面就介绍iOS设备怎么获取通讯录。
+在AddressBook.Framework中，苹果提供了相关API，而这些API是纯C语言的，在此基础上，本人简单封装一个类用来获取通讯录数据。
+这里我就定义为HHBGetContact类
+12345678910@interface HHBGetContact : NSObj
         </p>
     </div>
 </article>
@@ -247,11 +192,6 @@
 
     </div></section>
 
-
-    <nav id="page-nav">
-        <span class="pages">第 2 页，共 2 页</span>
-        <a class="extend prev" rel="prev" href="/">&laquo;</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
-    </nav>
 
 
                         </div>
