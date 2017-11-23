@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>获取设备通讯录-iOS | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="iOS" />
+    
+    <meta name="description" content="iOS获取设备通讯录有时候为了项目的推广，通过获取设备的通讯录是一种不错的手段，那么下面就介绍iOS设备怎么获取通讯录。 在AddressBook.Framework中，苹果提供了相关API，此API是纯C语言的，所以在此基础上，本人简单封装一个类以面向对象的方式用来获取通讯录数据。 这里我就定义为HHBGetContact类 12345678910@interface HHBGetContact">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="获取设备通讯录-iOS">
+<meta property="og:url" content="http://yoursite.com/2015/10/13/technology/获取设备通讯录-iOS/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="iOS获取设备通讯录有时候为了项目的推广，通过获取设备的通讯录是一种不错的手段，那么下面就介绍iOS设备怎么获取通讯录。 在AddressBook.Framework中，苹果提供了相关API，此API是纯C语言的，所以在此基础上，本人简单封装一个类以面向对象的方式用来获取通讯录数据。 这里我就定义为HHBGetContact类 12345678910@interface HHBGetContact">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-11-23T02:56:00.150Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="获取设备通讯录-iOS">
+<meta name="twitter:description" content="iOS获取设备通讯录有时候为了项目的推广，通过获取设备的通讯录是一种不错的手段，那么下面就介绍iOS设备怎么获取通讯录。 在AddressBook.Framework中，苹果提供了相关API，此API是纯C语言的，所以在此基础上，本人简单封装一个类以面向对象的方式用来获取通讯录数据。 这里我就定义为HHBGetContact类 12345678910@interface HHBGetContact">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    未分类
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-technology/获取设备通讯录-iOS" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        获取设备通讯录-iOS
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2015/10/13/technology/获取设备通讯录-iOS/" class="article-date">
+    <time datetime="2015-10-13T08:42:31.000Z" itemprop="datePublished">2015-10-13</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h4 id="iOS获取设备通讯录"><a href="#iOS获取设备通讯录" class="headerlink" title="iOS获取设备通讯录"></a>iOS获取设备通讯录</h4><p>有时候为了项目的推广，通过获取设备的通讯录是一种不错的手段，那么下面就介绍iOS设备怎么获取通讯录。</p>
+<p>在AddressBook.Framework中，苹果提供了相关API，此API是纯C语言的，所以在此基础上，本人简单封装一个类以面向对象的方式用来获取通讯录数据。</p>
+<p>这里我就定义为<font color="ff0079">HHBGetContact</font>类</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBGetContact</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 获取手机通讯录信息</div><div class="line"></div><div class="line"> @return 通讯录集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> *)getAllcontactsOfPhone;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：不要忘了引入<font color="ff0079">AddressBook/AddressBook.h</font>头文件</p>
+</blockquote>
+<p>主要实现的方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">+ (<span class="built_in">NSArray</span> *)getAllcontactsOfPhone&#123;</div><div class="line">    <span class="keyword">const</span> ABAddressBookRef *addressBooks = <span class="literal">nil</span>;</div><div class="line">    <span class="built_in">NSMutableArray</span> *contactM = [[<span class="built_in">NSMutableArray</span> alloc] init];</div><div class="line">    <span class="comment">// iOS6.0以上版本需要开启权限</span></div><div class="line">    <span class="keyword">if</span> ([[<span class="built_in">UIDevice</span> currentDevice].systemVersion floatValue] &gt;= <span class="number">6.0</span>) &#123;</div><div class="line">        addressBooks = ABAddressBookCreateWithOptions(<span class="literal">NULL</span>, <span class="literal">NULL</span>);</div><div class="line">        dispatch_semaphore_t sema = dispatch_semaphore_create(<span class="number">0</span>);</div><div class="line">        ABAddressBookRequestAccessWithCompletion(addressBooks, ^(<span class="keyword">bool</span> granted, <span class="built_in">CFErrorRef</span> error) &#123;</div><div class="line">            dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);</div><div class="line">        &#125;);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        addressBooks = ABAddressBookCreate();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">// 获取通讯录中的所有人</span></div><div class="line">    <span class="built_in">CFArrayRef</span> allPeoples = ABAddressBookCopyArrayOfAllPeople(addressBooks);</div><div class="line">    </div><div class="line">    <span class="comment">// 通讯录中人数</span></div><div class="line">    <span class="built_in">CFIndex</span> peopleCount = ABAddressBookGetPersonCount(addressBooks);</div><div class="line">    </div><div class="line">    <span class="comment">// 遍历每个人的信息</span></div><div class="line">    <span class="keyword">for</span> (<span class="built_in">NSInteger</span> i = <span class="number">0</span>; i &lt; peopleCount; i++)&#123;</div><div class="line">         <span class="built_in">NSMutableDictionary</span> *contactDict = [<span class="built_in">NSMutableDictionary</span> dictionary];</div><div class="line">        <span class="comment">// 获取个人</span></div><div class="line">        ABRecordRef person = <span class="built_in">CFArrayGetValueAtIndex</span>(allPeoples, i);</div><div class="line">        <span class="comment">// 获取个人名字</span></div><div class="line">        <span class="built_in">CFTypeRef</span> abName = ABRecordCopyValue(person, kABPersonFirstNameProperty);</div><div class="line">        <span class="built_in">CFTypeRef</span> abLastName = ABRecordCopyValue(person, kABPersonLastNameProperty);</div><div class="line">        <span class="built_in">CFStringRef</span> abFullName = ABRecordCopyCompositeName(person);</div><div class="line">        <span class="built_in">NSString</span> *nameString = (__bridge <span class="built_in">NSString</span> *)abName;</div><div class="line">        <span class="built_in">NSString</span> *lastNameString = (__bridge <span class="built_in">NSString</span> *)abLastName;</div><div class="line">        <span class="built_in">NSString</span> *address = (__bridge <span class="built_in">NSString</span> *)ABRecordCopyValue(person, kABPersonAddressProperty);</div><div class="line">        <span class="comment">// ... 这里可以根据自己的需要获取相应的信息</span></div><div class="line">        <span class="keyword">if</span> ((__bridge <span class="keyword">id</span>)abFullName != <span class="literal">nil</span>) &#123;</div><div class="line">            nameString = (__bridge <span class="built_in">NSString</span> *)abFullName;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span> ((__bridge <span class="keyword">id</span>)abLastName != <span class="literal">nil</span>)</div><div class="line">            &#123;</div><div class="line">                nameString = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@ %@"</span>, nameString, lastNameString];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">self</span>.name = nameString;</div><div class="line">        <span class="keyword">self</span>.recordID = (<span class="keyword">int</span>)ABRecordGetRecordID(person);</div><div class="line">        [contactDict setObject:<span class="keyword">self</span>.name forKey:<span class="string">@"name"</span>];</div><div class="line">        </div><div class="line">        ABPropertyID multiProperties[] = &#123;</div><div class="line">            kABPersonPhoneProperty,</div><div class="line">            kABPersonEmailProperty</div><div class="line">        &#125;;</div><div class="line">        <span class="built_in">NSInteger</span> multiPropertiesTotal = <span class="keyword">sizeof</span>(multiProperties) / <span class="keyword">sizeof</span>(ABPropertyID);</div><div class="line">        <span class="keyword">for</span> (<span class="built_in">NSInteger</span> j = <span class="number">0</span>; j &lt; multiPropertiesTotal; j++) &#123;</div><div class="line">            ABPropertyID property = multiProperties[j];</div><div class="line">            ABMultiValueRef valuesRef = ABRecordCopyValue(person, property);</div><div class="line">            <span class="built_in">NSInteger</span> valuesCount = <span class="number">0</span>;</div><div class="line">            <span class="keyword">if</span> (valuesRef != <span class="literal">nil</span>) &#123;</div><div class="line">                valuesCount = ABMultiValueGetCount(valuesRef);</div><div class="line">            &#125;</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> (valuesCount == <span class="number">0</span>) &#123;</div><div class="line">                <span class="built_in">CFRelease</span>(valuesRef);</div><div class="line">                <span class="keyword">continue</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// 获取联系电话和email</span></div><div class="line">            <span class="keyword">for</span> (<span class="built_in">NSInteger</span> k = <span class="number">0</span>; k &lt; valuesCount; k++) &#123;</div><div class="line">                <span class="built_in">CFTypeRef</span> value = ABMultiValueCopyValueAtIndex(valuesRef, k);</div><div class="line">                <span class="keyword">switch</span> (j) &#123;</div><div class="line">                    <span class="keyword">case</span> <span class="number">0</span>: &#123; <span class="comment">// 联系电话</span></div><div class="line">                        <span class="keyword">self</span>.telephoneNum = (__bridge <span class="built_in">NSString</span>*)value;</div><div class="line">                        [contactDict setObject:<span class="keyword">self</span>.telephoneNum forKey:<span class="string">@"telephoneNum"</span>];</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">case</span> <span class="number">1</span>: &#123;<span class="comment">// Email</span></div><div class="line">                        <span class="keyword">self</span>.email = (__bridge <span class="built_in">NSString</span>*)value;</div><div class="line">                        [contactDict setObject:<span class="keyword">self</span>.email forKey:<span class="string">@"email"</span>];</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="comment">// ... 这儿解析相应的信息数据 </span></div><div class="line">                &#125;</div><div class="line">                <span class="built_in">CFRelease</span>(value);</div><div class="line">            &#125;</div><div class="line">            <span class="built_in">CFRelease</span>(valuesRef);</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="comment">// 将个人信息添加到数组中</span></div><div class="line">        [contactM addObject:contactDict];</div><div class="line">        </div><div class="line">        <span class="comment">// 释放相关指针变量指向的内存空间, C的API需要自己手动管理内存</span></div><div class="line">        <span class="keyword">if</span> (abName) <span class="built_in">CFRelease</span>(abName);</div><div class="line">        <span class="keyword">if</span> (abLastName) <span class="built_in">CFRelease</span>(abLastName);</div><div class="line">        <span class="keyword">if</span> (abFullName) <span class="built_in">CFRelease</span>(abFullName);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> contactM.copy;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上的方法就是简单的介绍下这个思路，想深入研究的自己可以继续趴……</p>
+<font color="ff0079" size="5">闲扯一段：</font>
+
+<font color="sky-blue">当然拿到了通讯录，有些产品和设计不会满足，非要让你做出个通讯录界面；聪明的前端童鞋这时候开始甩锅了：数据分类可以让后台来搞啊，是啊，所有的数据排序、分类都可以让后端来搞，毕竟前端就是显示数据的么，😆😆😆，但并不是每个后端开发都是那么好说话的，为什么很多公司搞前端的比搞后端的看上去年轻好多呢？你懂得！！！ 哈哈哈哈哈 ， 有点小邪恶，开个玩笑，希望相关后端帅锅大大看到这段不要介意哈，由于通讯录的数据都是存在个人手机本地的，这个要是让服务端来排序、分类就有些牵强了哈，所以某些场合还需要咱自己来做这一部分工作，下面就简单介绍一下我的思路。</font>
+
+<blockquote>
+<p>思路 ：</p>
+<ol>
+<li><font color="orange">首先拿到的数据集合并没有分类，在帝国毫无疑问，绝大数的通讯录联系人都是中文，那么问题来了怎么归类呢？其实就是讲姓名转化为拼音，然后以姓的拼音的第一个字母归类，如：“张三” 拼音是zhangsan，那么就归到”Z”这一类中。</font>
+</li>
+<li><font color="orange">那么问题来了，怎么将中文转为拼音，其实这个不难，系统API提供相应的函数，下边会讲到。</font>
+</li>
+<li><font color="orange">数据归类后，接下来就是将数据排序了，这时候上边转为的拼音就有用了，可以根据汉语拼音进行排序，排序算法可以自己写，当然也可以用系统的API，我这里就用系统的吧。</font>
+</li>
+<li><font color="orange">基本思路就是以上三点，</font><font color="ff0079">多音字问题可以根据产品的规则单独处理</font>
+
+
+</li>
+</ol>
+</blockquote>
+<p>接下来就简单来写一个这样模型工具</p>
+<p>首先，将汉字转为拼音，我这里写了一个NSString的分类，添加一个pinyinString属性，然后在.m文件中重写getter。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSString</span> (<span class="title">HHBPinyinString</span>)</span></div><div class="line"></div><div class="line"><span class="comment">/// 如果字符串是中文会被转为相应的拼音</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *pinyinString;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NSString</span> (<span class="title">HHBPinyinString</span>)</span></div><div class="line"></div><div class="line">- (<span class="built_in">NSString</span> *)pinyinString &#123;</div><div class="line">    <span class="comment">// 断言，被转换的对象必须是一个字符串</span></div><div class="line">    <span class="built_in">NSAssert</span>([<span class="keyword">self</span> isKindOfClass:[<span class="built_in">NSString</span> <span class="keyword">class</span>]], <span class="string">@"被转换的对象必须是一个字符串"</span>);</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> == <span class="literal">nil</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSMutableString</span> *pinyin = [<span class="keyword">self</span> mutableCopy];</div><div class="line">    </div><div class="line">    <span class="comment">// 此函数会将当前对象转为有音节的拼音</span></div><div class="line">    <span class="built_in">CFStringTransform</span>((__bridge <span class="built_in">CFMutableStringRef</span>)pinyin, <span class="literal">NULL</span>, kCFStringTransformMandarinLatin, <span class="literal">NO</span>);</div><div class="line">    </div><div class="line">    <span class="comment">// 去掉拼音的音节</span></div><div class="line">    <span class="built_in">CFStringTransform</span>((__bridge <span class="built_in">CFMutableStringRef</span>)pinyin, <span class="literal">NULL</span>, kCFStringTransformStripDiacritics, <span class="literal">NO</span>);</div><div class="line">    <span class="keyword">return</span> pinyin;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>接着，定义一个联系人模型，模型中定义相关的属性，我这里定义了索引(分类需要)、拼音(排序需要)、联系人信息(原始数据，可根据自己的需要配置相应的数据)。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBContactModel</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/// 姓名</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *name;</div><div class="line"></div><div class="line"><span class="comment">/// email</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *email;</div><div class="line"></div><div class="line"><span class="comment">/// 联系电话</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *telephoneNum;</div><div class="line"></div><div class="line"><span class="comment">/// 索引（Word的首个大写字母，或者汉语拼音的首个大写字母）</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *index;</div><div class="line"></div><div class="line"><span class="comment">/// 拼音名称(英文名称则为全部转换成小写的字符串)</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *letterStr;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 实例对象便利构造器</div><div class="line"></div><div class="line"> @param dictionary 单个联系人信息</div><div class="line"> @return 联系人模型对象</div><div class="line"> */</div><div class="line">- (<span class="keyword">instancetype</span>)initWithDictionary:(<span class="built_in">NSDictionary</span> *)dictionary;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 类便利构造器</div><div class="line"> </div><div class="line"> @param dictionary 单个联系人信息</div><div class="line"> @return 联系人模型对象</div><div class="line"> */</div><div class="line">+ (<span class="keyword">instancetype</span>)contactModelWithWithDictionary:(<span class="built_in">NSDictionary</span> *)dictionary;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 联系人数据转模型数据集合</div><div class="line"></div><div class="line"> @param dataArray 联系人数据集合</div><div class="line"> @return 联系人模型数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactModel *&gt; *)contactModelsWithArray:(<span class="built_in">NSArray</span> *)dataArray;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HHBContactModel</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)initWithDictionary:(<span class="built_in">NSDictionary</span> *)dictionary &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        <span class="keyword">if</span> ([dictionary.allKeys containsObject:<span class="string">@"name"</span>]) &#123;</div><div class="line">            <span class="built_in">NSString</span> *word = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,dictionary[<span class="string">@"name"</span>]];</div><div class="line">            _name = word;</div><div class="line">            _letterStr = word.pinyinString;</div><div class="line">            _index = [<span class="keyword">self</span>.letterStr.uppercaseString substringToIndex:<span class="number">1</span>];</div><div class="line">            <span class="keyword">char</span> tempIndex = [_index characterAtIndex:<span class="number">0</span>];</div><div class="line">            <span class="keyword">if</span> (!(tempIndex &gt;= <span class="string">'A'</span> &amp;&amp; tempIndex &lt;= <span class="string">'Z'</span>)) &#123;</div><div class="line">                _index = <span class="string">@"#"</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> ([dictionary.allKeys containsObject:<span class="string">@"email"</span>]) &#123;</div><div class="line">            <span class="built_in">NSString</span> *email = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,dictionary[<span class="string">@"email"</span>]];</div><div class="line">            _email = email;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> ([dictionary.allKeys containsObject:<span class="string">@"telephoneNum"</span>]) &#123;</div><div class="line">            <span class="built_in">NSString</span> *telephoneNum = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@"</span>,dictionary[<span class="string">@"telephoneNum"</span>]];</div><div class="line">            _telephoneNum = telephoneNum;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (<span class="keyword">instancetype</span>)contactModelWithWithDictionary:(<span class="built_in">NSDictionary</span> *)dictionary &#123;</div><div class="line">    <span class="keyword">return</span> [[<span class="keyword">self</span> alloc] initWithDictionary:dictionary];</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactModel *&gt; *)contactModelsWithArray:(<span class="built_in">NSArray</span> *)dataArray &#123;</div><div class="line">    <span class="built_in">NSMutableArray</span> *modelArray = <span class="literal">nil</span>;</div><div class="line">    <span class="keyword">if</span> (dataArray.count) &#123;</div><div class="line">        modelArray = [<span class="built_in">NSMutableArray</span> arrayWithCapacity:dataArray.count];</div><div class="line">        <span class="keyword">for</span> (<span class="built_in">NSDictionary</span> *dict <span class="keyword">in</span> dataArray) &#123;</div><div class="line">            HHBContactModel *model = [HHBContactModel contactModelWithWithDictionary:dict];</div><div class="line">            [modelArray addObject:model];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> modelArray.copy;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>然后，我这里又定义一个模型来重组最终的数据，这个模型对象就只包含两个属性索引和索引对应的数据集合。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBContactCategoryModel</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/// 索引</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *index;</div><div class="line"></div><div class="line"><span class="comment">/// 索引对应的联系人集合</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSArray</span> &lt;HHBContactModel *&gt; *contactsArray;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 联系人数据转化为排序分类后的数据模型集合</div><div class="line"></div><div class="line"> @param dataArray 联系人集合数据</div><div class="line"> @return HHBContactCategoryModel对象数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactCategoryModel *&gt; *)contactsCategoryModesWithArray:(<span class="built_in">NSArray</span> *)dataArray;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 获取当前设备排序分类后的数据模型集合</div><div class="line"></div><div class="line"> @return HHBContactCategoryModel对象数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactCategoryModel *&gt; *)getContactsCategoryModel;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBContactCategoryModel</span>()</span></div><div class="line"></div><div class="line"><span class="comment">/// 索引</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *index;</div><div class="line"></div><div class="line"><span class="comment">/// 索引对应的国家集合</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSArray</span> &lt;HHBContactModel *&gt; *contactsArray;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HHBContactCategoryModel</span></span></div><div class="line"></div><div class="line"><span class="meta">#pragma mark - 分类排序联系人数据</span></div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactCategoryModel *&gt; *)contactsCategoryModesWithArray:(<span class="built_in">NSArray</span> *)dataArray &#123;</div><div class="line">    <span class="built_in">NSMutableDictionary</span> *dict = @&#123;&#125;.mutableCopy;</div><div class="line">    <span class="built_in">NSMutableArray</span> *indexArray = @[].mutableCopy;</div><div class="line">    <span class="built_in">NSMutableArray</span> *modelArray = @[].mutableCopy;</div><div class="line">    <span class="built_in">NSArray</span> *contactModelsArray = [HHBContactModel contactModelsWithArray:dataArray];</div><div class="line">    <span class="keyword">for</span> (HHBContactModel *model <span class="keyword">in</span> contactModelsArray) &#123;</div><div class="line">        <span class="keyword">if</span> ([indexArray containsObject:model.index]) &#123;</div><div class="line">            <span class="built_in">NSMutableArray</span> *tempArray = [[dict objectForKey:model.index] mutableCopy];</div><div class="line">            [tempArray addObject:model];</div><div class="line">            [dict setValue:tempArray.copy forKey:model.index];</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            [indexArray addObject:model.index];</div><div class="line">            [dict setValue:@[model] forKey:model.index];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">// 字母索引按升序排序</span></div><div class="line">    [indexArray sortUsingComparator:^<span class="built_in">NSComparisonResult</span>(<span class="built_in">NSString</span> *  _Nonnull obj1, <span class="built_in">NSString</span> *  _Nonnull obj2) &#123;</div><div class="line">        <span class="keyword">return</span> [obj1 compare:obj2];</div><div class="line">    &#125;];</div><div class="line">    </div><div class="line">    <span class="comment">// 如果有 “#” 数据则插入到最后</span></div><div class="line">    <span class="keyword">if</span> ([indexArray.firstObject isEqualToString:<span class="string">@"#"</span>]) &#123;</div><div class="line">        [indexArray removeObjectAtIndex:<span class="number">0</span>];</div><div class="line">        [indexArray addObject:<span class="string">@"#"</span>];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">// 组装成最终数据模型</span></div><div class="line">    <span class="keyword">for</span> (<span class="built_in">NSString</span> *index <span class="keyword">in</span> indexArray) &#123;</div><div class="line">        HHBContactCategoryModel *categoryModel = [[HHBContactCategoryModel alloc] init];</div><div class="line">        categoryModel.index = index;</div><div class="line">        <span class="built_in">NSMutableArray</span> *contactsArray = [[dict objectForKey:index] mutableCopy];</div><div class="line">        [contactsArray sortUsingComparator:^<span class="built_in">NSComparisonResult</span>(HHBContactModel *obj1, HHBContactModel *obj2) &#123;</div><div class="line">            <span class="keyword">return</span> [obj1.name.pinyinString compare:obj2.name.pinyinString];</div><div class="line">        &#125;];</div><div class="line">        categoryModel.contactsArray = contactsArray.copy;</div><div class="line">        [modelArray addObject:categoryModel];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> modelArray.copy;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#pragma mark - 获取当前设备的联系人集合数据(已分类排序)</span></div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBContactCategoryModel *&gt; *)getContactsCategoryModel &#123;</div><div class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> contactsCategoryModesWithArray:[HHBGetContact getAllcontactsOfPhone].copy];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>至此组装模型数据已简单完成，将拿到的数据调用此方法就可以获得最终已处理好的模型数据<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSArray</span> *dataArray = [HHBContactCategoryModel getContactsCategoryModel];</div></pre></td></tr></table></figure></p>
+<p>dataArray数据就是每组分类排序好的数据。</p>
+<p>我这里简单写了个小demo,不足之处欢迎大家指正：<a href="https://github.com/huhanze/HBGetContact" target="_blank" rel="external"><em><font color="ff0079">demo地址</font></em></a></p>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2015/10/13/technology/获取设备通讯录-iOS/" data-id="cjabvz64o000cc6ynj2fadisa" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/05/16/others/聚范社区文档/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            聚范社区文档
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+        <a href="/2013/05/27/technology/C++类的自动转换和强制类型转换/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">类的自动转换和强制类型转换</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/cocos2d-X_Xcode_1.png)" alt="Xcode中引入cocos2d-x" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="title">Xcode中引入cocos2d-x</a></p>
+                            <p class="item-date"><time datetime="2017-08-26T06:56:31.000Z" itemprop="datePublished">2017-08-26</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/01/technology/C++动态内存分配/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2017/06/01/technology/C++动态内存分配/" class="title">C++动态内存分配</a></p>
+                            <p class="item-date"><time datetime="2017-06-01T01:55:31.000Z" itemprop="datePublished">2017-06-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/22/life/测试2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/life/">生活</a></p>
+                            <p class="item-title"><a href="/2017/05/22/life/测试2/" class="title">测试2</a></p>
+                            <p class="item-date"><time datetime="2017-05-22T08:10:48.000Z" itemprop="datePublished">2017-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/16/others/聚范社区文档/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/jufan_logo.png)" alt="聚范社区文档" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/others/">其他</a></p>
+                            <p class="item-title"><a href="/2017/05/16/others/聚范社区文档/" class="title">聚范社区文档</a></p>
+                            <p class="item-date"><time datetime="2017-05-16T02:15:54.000Z" itemprop="datePublished">2017-05-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2015/10/13/technology/获取设备通讯录-iOS/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2015/10/13/technology/获取设备通讯录-iOS/" class="title">获取设备通讯录-iOS</a></p>
+                            <p class="item-date"><time datetime="2015-10-13T08:42:31.000Z" itemprop="datePublished">2015-10-13</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 13.33px;">C++</a> <a href="/tags/C语言/" style="font-size: 20px;">C语言</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/数据结构/" style="font-size: 10px;">数据结构</a> <a href="/tags/算法/" style="font-size: 16.67px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 16.67px;">链表</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2017 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2015/10/13/technology/获取设备通讯录-iOS/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
