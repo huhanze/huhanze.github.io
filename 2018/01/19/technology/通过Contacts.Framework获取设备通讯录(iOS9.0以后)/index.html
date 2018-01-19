@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>通过Contacts.Framework获取设备通讯录(iOS9.0以后) | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="iOS" />
+    
+    <meta name="description" content="之前写了一篇通过AddressBook.Framework获取通讯录的方式(文章地址)。 今天介绍一下iOS9.0以后的获取通讯录的方式。 Apple在iOS9.0以后推出了一套OC的API获取通讯录，相比之前的做了很多优化，获取方式也更简单、更方便了，更加地面向对象。下面就针对这套API来简单给出方案。 iOS9.0 Apple推出了Contacts.Framework 和 ContactsUI">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过Contacts.Framework获取设备通讯录(iOS9.0以后)">
+<meta property="og:url" content="http://yoursite.com/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="之前写了一篇通过AddressBook.Framework获取通讯录的方式(文章地址)。 今天介绍一下iOS9.0以后的获取通讯录的方式。 Apple在iOS9.0以后推出了一套OC的API获取通讯录，相比之前的做了很多优化，获取方式也更简单、更方便了，更加地面向对象。下面就针对这套API来简单给出方案。 iOS9.0 Apple推出了Contacts.Framework 和 ContactsUI">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-19T05:48:24.305Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过Contacts.Framework获取设备通讯录(iOS9.0以后)">
+<meta name="twitter:description" content="之前写了一篇通过AddressBook.Framework获取通讯录的方式(文章地址)。 今天介绍一下iOS9.0以后的获取通讯录的方式。 Apple在iOS9.0以后推出了一套OC的API获取通讯录，相比之前的做了很多优化，获取方式也更简单、更方便了，更加地面向对象。下面就针对这套API来简单给出方案。 iOS9.0 Apple推出了Contacts.Framework 和 ContactsUI">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/technology/">技术</a>
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        通过Contacts.Framework获取设备通讯录(iOS9.0以后)
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="article-date">
+    <time datetime="2018-01-19T03:13:12.000Z" itemprop="datePublished">2018-01-19</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <p>之前写了一篇通过<font color="FED534">AddressBook.Framework</font>获取通讯录的方式(<a href="http://huhanze.cn/2015/10/13/technology/获取设备通讯录-iOS/" target="_blank" rel="external"><em><font color="ff0079">文章地址</font></em></a>)。</p>
+<p><br><br>今天介绍一下iOS9.0以后的获取通讯录的方式。</p>
+<p><br><br>Apple在iOS9.0以后推出了一套OC的API获取通讯录，相比之前的做了很多优化，获取方式也更简单、更方便了，更加地面向对象。下面就针对这套API来简单给出方案。</p>
+<font color="sky-blue">iOS9.0 Apple推出了<font color="FED534">Contacts.Framework</font> 和 <font color="FED534">ContactsUI.framework</font>, 前一个是和纯库，后一个则是通讯录UI库。关于<font color="FED534">ContactsUI.framework</font>就不多说了，因为整个界面是调取设备通讯录的，一般用的不是很多，调用也不是很难。</font>
+
+<p>下面来说说<font color="FED534">Contacts.Framework</font>：</p>
+<p>先看看Contacts.h文件中引入了哪些头文件</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContact.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContact+Predicates.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNMutableContact.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContact+NSItemProvider.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNLabeledValue.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNPhoneNumber.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNPostalAddress.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNMutablePostalAddress.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNInstantMessageAddress.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNSocialProfile.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContactRelation.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNGroup.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNGroup+Predicates.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNMutableGroup.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContainer.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContainer+Predicates.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContactFormatter.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNPostalAddressFormatter.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContactVCardSerialization.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContactsUserDefaults.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNContactProperty.h&gt;</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;Contacts/CNError.h&gt;</span></span></div></pre></td></tr></table></figure>
+<p>这些头文件将各部分功能进行了抽离和划分，层次很清楚，可以根据自己的需求，进行相关的调用，这里我主要对已有的通讯录数据进行获取功能。</p>
+<p>先来看看CNContact.h头文件</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 联系人类型枚举</span></div><div class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, <span class="built_in">CNContactType</span>)</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CNContactTypePerson</span>,  <span class="comment">// 个人</span></div><div class="line">    <span class="built_in">CNContactTypeOrganization</span>,  <span class="comment">// 组织</span></div><div class="line">&#125; <span class="built_in">NS_ENUM_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line"></div><div class="line"><span class="comment">/// 联系人排序枚举，根据指定的类型可以对联系人进行排序</span></div><div class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, <span class="built_in">CNContactSortOrder</span>)</div><div class="line">&#123;</div><div class="line">    <span class="built_in">CNContactSortOrderNone</span>, </div><div class="line">    <span class="built_in">CNContactSortOrderUserDefault</span>,</div><div class="line">    <span class="built_in">CNContactSortOrderGivenName</span>,</div><div class="line">    <span class="built_in">CNContactSortOrderFamilyName</span>,</div><div class="line">&#125; <span class="built_in">NS_ENUM_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line"></div><div class="line"><span class="comment">/// 当前设备中联系人的唯一标识</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">copy</span>, <span class="built_in">NS_NONATOMIC_IOSONLY</span>) <span class="built_in">NSString</span> *identifier;</div><div class="line"></div><div class="line"><span class="comment">/// 联系人类型</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="built_in">NS_NONATOMIC_IOSONLY</span>) <span class="built_in">CNContactType</span> contactType;</div><div class="line"></div><div class="line"><span class="comment">/// name 前缀</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">copy</span>, <span class="built_in">NS_NONATOMIC_IOSONLY</span>) <span class="built_in">NSString</span> *namePrefix;</div><div class="line">......</div><div class="line">......</div><div class="line">......</div><div class="line"></div><div class="line"><span class="comment">/// 联系电话，这里存储的是CNLabeledValue类型的数组，email等等也是通过此方式存储</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">copy</span>, <span class="built_in">NS_NONATOMIC_IOSONLY</span>) <span class="built_in">NSArray</span>&lt;<span class="built_in">CNLabeledValue</span>&lt;<span class="built_in">CNPhoneNumber</span>*&gt;*&gt;  *phoneNumbers;</div></pre></td></tr></table></figure>
+<p>其它的头文件就不一一说明了，官方文档写的很清楚，接下来直接切入正题。</p>
+<p>获取通讯录先的检查权限，获取授权状态,在CNContactStore类中提供相应的方法。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 授权状态枚举</span></div><div class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSInteger</span>, <span class="built_in">CNAuthorizationStatus</span>)</div><div class="line">&#123;</div><div class="line">    <span class="comment">/*! 用户还没选择授权，一般在第一次调用时会弹窗 */</span></div><div class="line">    <span class="built_in">CNAuthorizationStatusNotDetermined</span> = <span class="number">0</span>,</div><div class="line">    <span class="comment">/*! 用户无法改变授权状态，可能由于其它的一些原因，比如父母控制 */</span></div><div class="line">    <span class="built_in">CNAuthorizationStatusRestricted</span>,</div><div class="line">    <span class="comment">/*! 用户拒绝访问通讯录 */</span></div><div class="line">    <span class="built_in">CNAuthorizationStatusDenied</span>,</div><div class="line">    <span class="comment">/*! 用户已经授权 */</span></div><div class="line">    <span class="built_in">CNAuthorizationStatusAuthorized</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">CNAuthorizationStatus</span> status = [<span class="built_in">CNContactStore</span> authorizationStatusForEntityType:<span class="built_in">CNEntityTypeContacts</span>];</div><div class="line"></div><div class="line"><span class="comment">// 拿到状态后判断是否满足条件，授权成功则直接请求通讯录，未授权则先同意授权之后，在请求获取通讯录</span></div></pre></td></tr></table></figure>
+<p>请求获取通讯录：</p>
+<blockquote>
+<p>先创建一个获取请求，CNContactFetchRequest类创建一个请求。</p>
+<p>CNContactFetchRequest类创建一个请求时需要指定要获取联系人的哪些数据，如姓名、手机、邮箱、地址等等，每个数据的item苹果都给了对应的key </p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Properties that are always fetched. Can be used with key value coding and observing.</span></div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactIdentifierKey</span>                      <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line"></div><div class="line"><span class="comment">// Optional properties that can be fetched. Can be used with key value coding and observing.</span></div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactNamePrefixKey</span>                      <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactGivenNameKey</span>                       <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactMiddleNameKey</span>                      <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactFamilyNameKey</span>                      <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPreviousFamilyNameKey</span>              <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactNameSuffixKey</span>                      <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactNicknameKey</span>                        <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactOrganizationNameKey</span>                <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactDepartmentNameKey</span>                  <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactJobTitleKey</span>                        <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPhoneticGivenNameKey</span>               <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPhoneticMiddleNameKey</span>              <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPhoneticFamilyNameKey</span>              <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPhoneticOrganizationNameKey</span>        <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_12, <span class="number">10</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactBirthdayKey</span>                        <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactNonGregorianBirthdayKey</span>            <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactNoteKey</span>                            <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactImageDataKey</span>                       <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactThumbnailImageDataKey</span>              <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactImageDataAvailableKey</span>              <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_12, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactTypeKey</span>                            <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPhoneNumbersKey</span>                    <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactEmailAddressesKey</span>                  <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactPostalAddressesKey</span>                 <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactDatesKey</span>                           <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactUrlAddressesKey</span>                    <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactRelationsKey</span>                       <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactSocialProfilesKey</span>                  <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div><div class="line">CONTACTS_EXTERN <span class="built_in">NSString</span> * <span class="keyword">const</span> <span class="built_in">CNContactInstantMessageAddressesKey</span>         <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11, <span class="number">9</span>_0);</div></pre></td></tr></table></figure>
+<p>这里我就拿姓名和手机、邮箱来举例。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 设置需要访问的数据</span></div><div class="line"><span class="built_in">NSArray</span> *keys = @[<span class="built_in">CNContactIdentifierKey</span>,<span class="built_in">CNContactEmailAddressesKey</span>,<span class="built_in">CNContactPhoneNumbersKey</span>,[<span class="built_in">CNContactFormatter</span> descriptorForRequiredKeysForStyle:<span class="built_in">CNContactFormatterStyleFullName</span>]];</div><div class="line"></div><div class="line"><span class="comment">/// 创建请求</span></div><div class="line"><span class="built_in">CNContactFetchRequest</span> *request = [[<span class="built_in">CNContactFetchRequest</span> alloc] initWithKeysToFetch:keys];</div></pre></td></tr></table></figure>
+<p>在上面的keys数据中使用了CNContactFormatter来获取全名，由于老外的姓名跟咱国家的姓名差别(中国姓在前名在后，大多数以英语为母语的国家都是名在前姓在后)，这样就完美的处理这些问题。</p>
+<p>接下来就是获取了。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 来存储联系人数据</span></div><div class="line"><span class="built_in">NSMutableArray</span> *contactM = @[].mutableCopy;</div><div class="line">    </div><div class="line"><span class="built_in">CNContactStore</span> *store = [[<span class="built_in">CNContactStore</span> alloc] init];</div><div class="line">[store enumerateContactsWithFetchRequest:request error:<span class="literal">nil</span> usingBlock:^(<span class="built_in">CNContact</span> * _Nonnull contact, <span class="built_in">BOOL</span> * _Nonnull stop) &#123;</div><div class="line">    [contactM addObject:contact];</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<p>这样获取数据已经完成了，而且contactM数据基本已经排好序，简单吧，有木有。当然这个数组里面存储的是CNContact对象数据，下面就对这些数据进一步解析，封装成咱们用起来更方便的模型数据。</p>
+<p>为了与上边第一种方式获取通讯录中的自定义模型数据区分，这里我有单独创建了一个新的解析Model - HBGetContactsModel</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBGetContactsModel</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line"> 这里就用以下三个属性数据作为例子，其它数据自行添加即可</div><div class="line"> */</div><div class="line"><span class="comment">/// 姓名(全名)</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *fullName;</div><div class="line"></div><div class="line"><span class="comment">/// email</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *email;</div><div class="line"></div><div class="line"><span class="comment">/// 联系电话</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *telephoneNum;</div><div class="line"></div><div class="line"><span class="comment">/// 姓名字母索引 (用于归类)</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *index;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 实例对象便利构造器</div><div class="line"> </div><div class="line"> @param contact 单个联系人信息</div><div class="line"> @return 联系人模型对象</div><div class="line"> */</div><div class="line">- (<span class="keyword">instancetype</span>)initWithCNContact:(<span class="built_in">CNContact</span> *)contact;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 类便利构造器</div><div class="line"> </div><div class="line"> @param contact 单个联系人信息</div><div class="line"> @return 联系人模型对象</div><div class="line"> */</div><div class="line">+ (<span class="keyword">instancetype</span>)contactsModelWithCNContact:(<span class="built_in">CNContact</span> *)contact;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 联系人数据转模型数据集合</div><div class="line"> </div><div class="line"> @param contacts 联系人数据集合</div><div class="line"> @return 联系人模型数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBGetContactsModel *&gt; *)contactModelsWithArray:(<span class="built_in">NSArray</span> &lt;<span class="built_in">CNContact</span> *&gt; *)contacts;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 获取通讯录联系人信息</div><div class="line"></div><div class="line"> @return 自定义模型 联系人数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBGetContactsModel *&gt; *)getContacts;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">9</span>_0)</div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HHBGetContactsCategoryModel</span> : <span class="title">NSObject</span></span></div><div class="line"></div><div class="line"><span class="comment">/// 索引</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *index;</div><div class="line"></div><div class="line"><span class="comment">/// 索引对应的姓名集合</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSArray</span> &lt;HHBGetContactsModel *&gt; *contactsArray;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> 获取当前设备排序分类后的数据模型集合</div><div class="line"> </div><div class="line"> @return HHBContactCategoryModel对象数据集合</div><div class="line"> */</div><div class="line">+ (<span class="built_in">NSArray</span> &lt;HHBGetContactsCategoryModel *&gt; *)getContactsCategoryModel;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>定义了两个类，HHBGetContactsModel和HHBGetContactsCategoryModel，HHBGetContactsModel转换CNContact数据，HHBGetContactsCategoryModel组装最终显示在UITableView中的分组数据</p>
+<p>这样数据这一块已经完成，关于UI自己可以根据自己的需求设计，一般大多数APP其实主要是需要用户的数据，对界面并不是特别在意，直接使用<font color="FED534">ContactsUI.framework</font>的也不多，重要的还是在数据这一块。</p>
+<p>对比两种方式，iOS9.0以后的这API还是很好用的，排序这一块其实就是基本已经排好的，我们做的只是分类就好了，效率很高。而iOS9.0以前的获取放是在中文转换拼音这一过程很耗时，而且多音字问题还得处理等等。推荐后一种方法。</p>
+<p><a href="https://github.com/huhanze/HBGetContact" target="_blank" rel="external"><em><font color="ff0079">demo地址</font></em></a></p>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" data-id="cjcli8v3g000qcsfy2c4zcq1i" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">Xcode中引入cocos2d-x</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="title">通过Contacts.Framework获取设备通讯录(iOS9.0以后)</a></p>
+                            <p class="item-date"><time datetime="2018-01-19T03:13:12.000Z" itemprop="datePublished">2018-01-19</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/cocos2d-X_Xcode_1.png)" alt="Xcode中引入cocos2d-x" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="title">Xcode中引入cocos2d-x</a></p>
+                            <p class="item-date"><time datetime="2017-08-26T06:56:31.000Z" itemprop="datePublished">2017-08-26</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/22/life/测试2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/life/">生活</a></p>
+                            <p class="item-title"><a href="/2017/05/22/life/测试2/" class="title">测试2</a></p>
+                            <p class="item-date"><time datetime="2017-05-22T08:10:48.000Z" itemprop="datePublished">2017-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/05/16/others/聚范社区文档/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/jufan_logo.png)" alt="聚范社区文档" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/others/">其他</a></p>
+                            <p class="item-title"><a href="/2017/05/16/others/聚范社区文档/" class="title">聚范社区文档</a></p>
+                            <p class="item-date"><time datetime="2017-05-16T02:15:54.000Z" itemprop="datePublished">2017-05-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2015/10/13/technology/获取设备通讯录-iOS/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2015/10/13/technology/获取设备通讯录-iOS/" class="title">获取设备通讯录-iOS</a></p>
+                            <p class="item-date"><time datetime="2015-10-13T08:42:31.000Z" itemprop="datePublished">2015-10-13</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">5</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图/">图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/C语言/" style="font-size: 20px;">C语言</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 12.5px;">iOS</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/图/" style="font-size: 10px;">图</a> <a href="/tags/数据结构/" style="font-size: 12.5px;">数据结构</a> <a href="/tags/算法/" style="font-size: 17.5px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 15px;">链表</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2018 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
