@@ -17,7 +17,7 @@
 <meta property="og:description" content="1. __has_include传一个你想要引入的头文件名称作为参数，如果文件能够被引入返回1，否则返回0。 如： 12345#if __has_include(&amp;lt;AFNetworking/AFNetworking.h&amp;gt;)#import &amp;lt;AFNetworking/AFNetworking.h&amp;gt;#else#import &quot;AFNetworking.h&quot;#endif 2. _">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/logo/logo_tech_06.jpg">
-<meta property="og:updated_time" content="2018-05-23T03:01:35.308Z">
+<meta property="og:updated_time" content="2018-05-23T03:13:01.614Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发中常见的宏">
 <meta name="twitter:description" content="1. __has_include传一个你想要引入的头文件名称作为参数，如果文件能够被引入返回1，否则返回0。 如： 12345#if __has_include(&amp;lt;AFNetworking/AFNetworking.h&amp;gt;)#import &amp;lt;AFNetworking/AFNetworking.h&amp;gt;#else#import &quot;AFNetworking.h&quot;#endif 2. _">
@@ -164,10 +164,10 @@
             <h2 id="1-has-include"><a href="#1-has-include" class="headerlink" title="1. __has_include"></a>1. __has_include</h2><p>传一个你想要引入的头文件名称作为参数，如果文件能够被引入返回1，否则返回0。</p>
 <p>如：</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#if __has_include(<span class="meta-string">&lt;AFNetworking/AFNetworking.h&gt;</span>)</span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;AFNetworking/AFNetworking.h&gt;</span></span></div><div class="line"><span class="meta">#else</span></div><div class="line"><span class="meta">#import <span class="meta-string">"AFNetworking.h"</span></span></div><div class="line"><span class="meta">#endif</span></div></pre></td></tr></table></figure>
-<h2 id="2-func-，-FUNCTION-，-PRETTY-FUNCTION"><a href="#2-func-，-FUNCTION-，-PRETTY-FUNCTION" class="headerlink" title="2. __func__，__FUNCTION__ ，__PRETTY_FUNCTION__"></a>2. __func__，__FUNCTION__ ，__PRETTY_FUNCTION__</h2><blockquote>
-<p><font color="red">__func__ </font>: C99标准，GCC只输出函数名称。</p>
-<p><font color="red">__FUNCTION__</font> ：只输出函数名称，同__func__。</p>
-<p><font color="red">__PRETTY_FUNCTION__ </font>：若用 g++ 编译 C++ 程序, __FUNCTION__ 只能输出类的成员函数名,不会输出类名；而 __PRETTY_FUNCTION__ 则会以 \<return-type> \<class-name>::\<member-function-name>(\<parameters-list\>)的格式输出成员函数的详悉信息(注: 只会输出 parameters-list 的形参类型，而不会输出形参名), 若用 gcc 编译 C 程序，__PRETTY_FUNCTION__ 跟 __FUNCTION__ 的功能相同。</parameters-list\></member-function-name></class-name></return-type></p>
+<h2 id="2-func-，-FUNCTION-，-PRETTY-FUNCTION"><a href="#2-func-，-FUNCTION-，-PRETTY-FUNCTION" class="headerlink" title="2. _func__，__FUNCTION\_ ，__PRETTY_FUNCTION__"></a>2. _<em>func__，__FUNCTION\</em>_ ，__PRETTY_FUNCTION__</h2><blockquote>
+<p><font color="red">_<em>func\</em>_ </font>: C99标准，GCC只输出函数名称。</p>
+<p><font color="red">_<em>FUNCTION\</em>_</font> ：只输出函数名称，同_<em>func\</em>_。</p>
+<p><font color="red">__PRETTY_FUNCTION__ </font>：若用 g++ 编译 C++ 程序, __FUNCTION__ 只能输出类的成员函数名,不会输出类名；而 __PRETTY_FUNCTION__ 则会以 \<return-type\> \<class-name\>\::\<member-function-name\>(\<parameters-list\>)的格式输出成员函数的详悉信息(注: 只会输出 parameters-list 的形参类型，而不会输出形参名), 若用 gcc 编译 C 程序，__PRETTY_FUNCTION__ 跟 _<em>FUNCTION\</em>_ 的功能相同。</parameters-list\></member-function-name\></class-name\></return-type\></p>
 </blockquote>
 <h2 id="3-VA-ARGS"><a href="#3-VA-ARGS" class="headerlink" title="3. __VA_ARGS__"></a>3. __VA_ARGS__</h2><p>C99 编译器标准允许定义可变参数宏, 如打印变量信息时，经常会做如下扩展：</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#define HBFLog(format, ...) NSLog(format, __VA_ARGS__)</span></div></pre></td></tr></table></figure>
@@ -175,7 +175,7 @@
 <h2 id="4-‘-’"><a href="#4-‘-’" class="headerlink" title="4. ‘##’"></a>4. ‘##’</h2><p>在标准 C 里，你不能省略可变参数，但是你却可以给它传递一个空的参数。GNU CPP 在这种情况下可以让你完全的忽略可变参数。在上面的例子中，编译器仍然会有问题（ complain ），因为宏展开后，里面的字符串后面会有个多余的逗号。<br>为了解决这个问题， CPP 使用一个特殊的‘ ## ’操作：</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#define HBFLog(format, ...) NSLog(format, ##__VA_ARGS__)</span></div></pre></td></tr></table></figure>
 <p>这里，如果可变参数被忽略或为空，‘ ## ’操作将使预处理器（ preprocessor ）去除掉它前面的那个逗号。如果你在宏调用时，确实提供了一些可变参数， GNU CPP 也会工作正常，它会把这些可变参数放到逗号的后面。</p>
-<h2 id="5-LINE"><a href="#5-LINE" class="headerlink" title="5. __LINE__"></a>5. __LINE__</h2><p>插入当前代码的行数。</p>
+<h2 id="5-LINE"><a href="#5-LINE" class="headerlink" title="5. _LINE\_"></a>5. _<em>LINE\</em>_</h2><p>插入当前代码的行数。</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#ifdef DEBUG</span></div><div class="line"><span class="meta">#define HBFLog(fmt, ...) NSLog((@<span class="meta-string">"%s - Line %d - "</span> fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);</span></div><div class="line"><span class="meta">#else</span></div><div class="line"><span class="meta">#define HBFLog(...)</span></div><div class="line"><span class="meta">#endif</span></div></pre></td></tr></table></figure>
 <h2 id="6-NS-ASSUME-NONNULL-BEGIN-与-NS-ASSUME-NONNULL-END"><a href="#6-NS-ASSUME-NONNULL-BEGIN-与-NS-ASSUME-NONNULL-END" class="headerlink" title="6. NS_ASSUME_NONNULL_BEGIN 与 NS_ASSUME_NONNULL_END"></a>6. NS_ASSUME_NONNULL_BEGIN 与 NS_ASSUME_NONNULL_END</h2><p>swift推出以后，引入了optional类型和non-optional类型，然而在OC中并没有区分，那么在OC与swift混编就带来了一系列问题，因此，苹果在 Xcode 6.3 引入了一个 Objective-C 的新特性：nullability annotations。这一新特性的核心是两个新的类型注释：__nullable 和 __nonnull。从字面上我们可以猜到，__nullable 表示对象可以是 NULL 或 nil，而 __nonnull 表示对象不应该为空。</p>
 <p>但是如果在定义每一个属性都去指定的话，估计开发者对苹果说mmp了，当然苹果还是考虑到了这些，专门提供了两个宏：NS_ASSUME_NONNULL_BEGIN 和 NS_ASSUME_NONNULL_END,在这两个宏之间的代码，所有简单指针对象都被假定为 nonnull，因此我们只需要去指定那些 nullable 的指针</p>
@@ -186,7 +186,7 @@
 
 
 
-    <a data-url="http://yoursite.com/2018/05/23/technology/iOS开发中常见的宏/" data-id="cjhij0kyh000ke3ynszm84q0o" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://yoursite.com/2018/05/23/technology/iOS开发中常见的宏/" data-id="cjhija48t000kgqynpld38sb3" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         $('body').on('click', function() {
