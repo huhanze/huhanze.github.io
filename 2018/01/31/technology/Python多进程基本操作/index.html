@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Python进程和线程的基本操作 | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="Python" />
+    
+    <meta name="description" content="多进程在Unix/Linux/Mac OSX 系统中提供了fork()函数来调用进程。fork()与普通的函数不一样，它调用一次，返回两次，调用fork()后，操作系统自动复制了一份当前的进程，并将复制的进程作为子进程，被复制的进程作为父进程一块返回，而子进程的ID永远返回0，父进程返回子进程的ID。通过父进程调用fork()可以复制很多子进程，由于父进程记录了每个子进程的ID，子进程可以通过调用">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python进程和线程的基本操作">
+<meta property="og:url" content="http://yoursite.com/2018/01/31/technology/Python多进程基本操作/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="多进程在Unix/Linux/Mac OSX 系统中提供了fork()函数来调用进程。fork()与普通的函数不一样，它调用一次，返回两次，调用fork()后，操作系统自动复制了一份当前的进程，并将复制的进程作为子进程，被复制的进程作为父进程一块返回，而子进程的ID永远返回0，父进程返回子进程的ID。通过父进程调用fork()可以复制很多子进程，由于父进程记录了每个子进程的ID，子进程可以通过调用">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/logo/logo_tech_11.jpg">
+<meta property="og:updated_time" content="2018-03-21T10:34:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python进程和线程的基本操作">
+<meta name="twitter:description" content="多进程在Unix/Linux/Mac OSX 系统中提供了fork()函数来调用进程。fork()与普通的函数不一样，它调用一次，返回两次，调用fork()后，操作系统自动复制了一份当前的进程，并将复制的进程作为子进程，被复制的进程作为父进程一块返回，而子进程的ID永远返回0，父进程返回子进程的ID。通过父进程调用fork()可以复制很多子进程，由于父进程记录了每个子进程的ID，子进程可以通过调用">
+<meta name="twitter:image" content="http://yoursite.com/images/logo/logo_tech_11.jpg">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/technology/">技术</a>
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-technology/Python多进程基本操作" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        Python进程和线程的基本操作
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2018/01/31/technology/Python多进程基本操作/" class="article-date">
+    <time datetime="2018-01-31T01:30:31.000Z" itemprop="datePublished">2018-01-31</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h3 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h3><p>在Unix/Linux/Mac OSX 系统中提供了<font color="red">fork()</font>函数来调用进程。<font color="red">fork()</font>与普通的函数不一样，它调用一次，返回两次，调用<font color="red">fork()</font>后，操作系统自动复制了一份当前的进程，并将复制的进程作为子进程，被复制的进程作为父进程一块返回，而子进程的ID永远返回0，父进程返回子进程的ID。通过父进程调用<font color="red">fork()</font>可以复制很多子进程，由于父进程记录了每个子进程的ID，子进程可以通过调用<font color="red">getppid()</font>函数可以拿到父进程的ID。</p>
+<p>Python的os模块封装常用的系统调用函数，在Unix/Linux系统可以直接调用这些函数就可以创建和管理进程了。</p>
+<p>但是Windows下并不能执行<font color="red">fork()</font>，所以Python提供了mutiprocessing模块来创建和使用进程</p>
+<h4 id="mutiprocessing"><a href="#mutiprocessing" class="headerlink" title="mutiprocessing"></a>mutiprocessing</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process </div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">func_process</span><span class="params">(str)</span>:</span></div><div class="line">    print(<span class="string">'启动子进程... %s --- %s'</span> % (str,os.getpid()))</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    print(<span class="string">'父进程 %s.'</span> % os.getpid())</div><div class="line">    p = Process(target=func_process,args=(<span class="string">'child'</span>,))</div><div class="line">    print(<span class="string">'准备启动子进程...'</span>)</div><div class="line">    p.start()</div><div class="line">    p.join()</div><div class="line">    print(<span class="string">'终止子进程...'</span>)</div><div class="line">    </div><div class="line"><span class="string">'''</span></div><div class="line">执行结果：</div><div class="line">	父进程 1842.</div><div class="line">	准备启动子进程...</div><div class="line">	启动子进程... child --- 1843</div><div class="line">	终止子进程...</div><div class="line">'''</div></pre></td></tr></table></figure>
+<p>通过Process直接创建一个子进程对象，然后通过start()启动，那么join()干啥用的呢？可以干掉这一句看看执行结果，肯定和预期想象的有出入。其实join()用于进程间的同步，通过join()让其他任务等待子线程结束后再执行其他任务。</p>
+<h4 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a>进程池</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</div><div class="line"><span class="keyword">import</span> os, time</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_func</span><span class="params">(name)</span>:</span></div><div class="line">    print(<span class="string">'执行任务-%s --- 进程ID : %s...'</span> % (name, os.getpid()))</div><div class="line">    time.sleep(<span class="number">0.8</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</div><div class="line">    print(<span class="string">'获取父进程 ：%s.'</span> % os.getpid())</div><div class="line">    p = Pool(<span class="number">4</span>)</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</div><div class="line">        p.apply_async(task_func, args=(i,))</div><div class="line">    print(<span class="string">'等待所有子线程执行...'</span>)</div><div class="line">    p.close()</div><div class="line">    p.join()</div><div class="line">    print(<span class="string">'所有子线程执行完毕！'</span>)</div></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<p><img src="/images/python_processing_01.png" alt="image"></p>
+<p>上述代码中 <font color="red">Pool(4)</font> 创建了一个进程池，进程池中允许开启4个进程，调用<font color="red">Pool</font>创建对象默认大小为CPU的核数。如果不调用<font color="red">join()</font>,则进程池执行完第4个任务后不会继续执行了，但使用了<font color="red">join()</font>必须在调用<font color="red">join()</font>之前调用<font color="red">close()</font>函数，否则会报错 - <font color="red">AssertionError ：assert self._state in (CLOSE, TERMINATE) </font></p>
+<p>上述的5个任务中，第5个任务是在前4个执行完之后才执行，并且没创建新的进程。</p>
+<h4 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h4><p>Python提供了Queue、Pipes等方式来实现各进程间相互作用，如Queue：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</div><div class="line"><span class="keyword">import</span> os, time</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">put_str</span><span class="params">(queue)</span>:</span></div><div class="line">    print(<span class="string">'入队消息进程-%s'</span> % os.getpid())</div><div class="line">    value = <span class="string">'I love Python!'</span></div><div class="line">    print(value + <span class="string">'进队啦！'</span>)</div><div class="line">    queue.put(value)</div><div class="line">    time.sleep(<span class="number">0.5</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_str</span><span class="params">(queue)</span>:</span></div><div class="line">    print(<span class="string">'出队消息进程-%s'</span> % os.getpid())</div><div class="line">    value = queue.get(<span class="keyword">True</span>)</div><div class="line">    print(value + <span class="string">'出队啦！'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    queue = Queue()</div><div class="line">    process_put = Process(target = put_str, args = (queue,))</div><div class="line">    process_get = Process(target = get_str, args = (queue,))</div><div class="line"></div><div class="line">    process_put.start()</div><div class="line">    process_get.start()</div><div class="line">    process_put.join()</div><div class="line">    process_get.join()</div><div class="line">    process_put.terminate()</div><div class="line">    process_get.terminate()</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="/images/python_processing_02.png" alt="image"></p>
+<p>上述代码中的process_put和process_get两个进程都访问了同一value数据。</p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>线程（thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。线程依赖于进程，一个进程中至少有一个线程。</p>
+<h4 id="Python中线程基本操作"><a href="#Python中线程基本操作" class="headerlink" title="Python中线程基本操作"></a>Python中线程基本操作</h4><p>在Python中，提供了两个模块_thread和threading，其中_thread是低级模块，threading是高级模块，threading是对_thread的封装，在开发中，绝大多数情况还是用threading。通过threading调用Thread创建线程并调用start()执行。</p>
+<p>下面简单做一下线程的基本操作，使用前别忘了导入需要的模块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> threading</div></pre></td></tr></table></figure>
+<p>获取已经激活的线程数量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">count = threading.active_count()</div><div class="line">print(<span class="string">'当前已激活的线程数量 ：'</span> , count)</div><div class="line"><span class="comment"># 当前已激活的线程数量 ： 1</span></div></pre></td></tr></table></figure>
+<p>当前显示本电脑只开启了一条线程，下面来获取这线程的信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">thread_info = threading.current_thread()</div><div class="line">print(<span class="string">'当前线程 ：'</span>,thread_info)</div><div class="line"><span class="comment"># 当前线程 ： [&lt;_MainThread(MainThread, started 140737198580672)&gt;]</span></div></pre></td></tr></table></figure>
+<p>很明显，该线程是主线程，那么怎么获取所有的线程信息呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">all_thread_info = threading.enumerate()</div><div class="line">print(<span class="string">'所有线程 ：'</span>, all_thread_info)</div><div class="line"><span class="comment"># 所有线程 ： [&lt;_MainThread(MainThread, started 140737198580672)&gt;]</span></div></pre></td></tr></table></figure>
+<p>此时返回的是一个存储线程信息的列表，当前的列表数据只有主线程信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> threading,time</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_fun</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">'当前线程 ：%s'</span> % threading.current_thread().name)</div><div class="line"></div><div class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">5</span>):</div><div class="line">        print(<span class="string">'当前线程 ：%s ---- %s'</span> % (threading.current_thread().name, x))</div><div class="line">        time.sleep(<span class="number">0.5</span>)</div><div class="line">    print(<span class="string">'线程 ：%s 结束运行'</span> % threading.current_thread().name)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    print(<span class="string">'当前线程 ：%s'</span> % threading.current_thread().name)</div><div class="line">    thread = threading.Thread(target = thread_fun, name = <span class="string">'thread_fun'</span>)</div><div class="line">    thread.start()</div><div class="line">    thread.join()</div><div class="line">    print(<span class="string">'线程 ：%s 结束运行'</span> % threading.current_thread().name)</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="/images/python_processing_03.png" alt=""></p>
+<p>程序默认是启动主线程的，程序中通过代码又开启了新的线程来执行thread_fun()中的任务。线程的name其实没什么实际意义，这里指定一个名称是为了更加直观地看起来开启了新的线程，即使为设置name，主线程的name序号为1，子线程的name是序号不为1的任意数字，可能是Thread-2,Thread-3等等。</p>
+<h3 id="进程与线程的比较"><a href="#进程与线程的比较" class="headerlink" title="进程与线程的比较"></a>进程与线程的比较</h3><p>Python中进程和线程的操作大都类似，但在Python中执行多线程操作效率很低，因为Python解释器执行代码时，有一个GIL锁：Global Interpreter Lock，任何Python线程执行前，必须先获得GIL锁，这个锁把所有线程的执行代码都给锁上了，及时电脑CPU核数再多也只能用到单个核，多线程的效率甚至比多个函数执行的还低。但是Python中的多进程可以充分利用多核，每个进程的GIL锁都是独立的。</p>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2018/01/31/technology/Python多进程基本操作/" data-id="cjhiiwb7y0008bvynww064nil" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2018/05/23/technology/iOS开发中常见的宏/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            iOS开发中常见的宏
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+        <a href="/2018/01/30/technology/解决Python编程蛋疼的缩进问题报错/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">解决Python编程蛋疼的缩进问题报错</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/05/23/technology/iOS开发中常见的宏/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_06.jpg)" alt="iOS开发中常见的宏" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/05/23/technology/iOS开发中常见的宏/" class="title">iOS开发中常见的宏</a></p>
+                            <p class="item-date"><time datetime="2018-05-23T02:11:58.000Z" itemprop="datePublished">2018-05-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/31/technology/Python多进程基本操作/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_11.jpg)" alt="Python进程和线程的基本操作" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/31/technology/Python多进程基本操作/" class="title">Python进程和线程的基本操作</a></p>
+                            <p class="item-date"><time datetime="2018-01-31T01:30:31.000Z" itemprop="datePublished">2018-01-31</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/30/technology/解决Python编程蛋疼的缩进问题报错/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_3.jpg)" alt="解决Python编程蛋疼的缩进问题报错" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/30/technology/解决Python编程蛋疼的缩进问题报错/" class="title">解决Python编程蛋疼的缩进问题报错</a></p>
+                            <p class="item-date"><time datetime="2018-01-30T02:55:03.000Z" itemprop="datePublished">2018-01-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_7.jpg)" alt="通过Contacts.Framework获取设备通讯录(iOS9.0以后)" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="title">通过Contacts.Framework获取设备通讯录(iOS9.0以后)</a></p>
+                            <p class="item-date"><time datetime="2018-01-19T03:13:12.000Z" itemprop="datePublished">2018-01-19</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_8.jpg)" alt="Xcode中引入cocos2d-x" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="title">Xcode中引入cocos2d-x</a></p>
+                            <p class="item-date"><time datetime="2017-08-26T06:56:31.000Z" itemprop="datePublished">2017-08-26</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">5</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图/">图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/C语言/" style="font-size: 20px;">C语言</a> <a href="/tags/Python/" style="font-size: 12.5px;">Python</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 17.5px;">iOS</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/图/" style="font-size: 10px;">图</a> <a href="/tags/数据结构/" style="font-size: 12.5px;">数据结构</a> <a href="/tags/算法/" style="font-size: 17.5px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 15px;">链表</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2018 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2018/01/31/technology/Python多进程基本操作/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
