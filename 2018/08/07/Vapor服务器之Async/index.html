@@ -8,19 +8,19 @@
     
         <meta name="keywords" content="Swift,服务端" />
     
-    <meta name="description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+    <meta name="description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 Future** type。如果这是你第一次听说futures，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。 Promises和 futures有关联，但他们有着明显类型，Promises是用来创建futures。在大多数时候，你将会一直使用futures工作，接受Vapor‘s API返回的值,甚至">
 <meta name="keywords" content="Swift,服务端">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vapor服务器之Async">
 <meta property="og:url" content="http://yoursite.com/2018/08/07/Vapor服务器之Async/index.html">
 <meta property="og:site_name" content="Dylan.Hu&#39;Memory">
-<meta property="og:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+<meta property="og:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 Future** type。如果这是你第一次听说futures，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。 Promises和 futures有关联，但他们有着明显类型，Promises是用来创建futures。在大多数时候，你将会一直使用futures工作，接受Vapor‘s API返回的值,甚至">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/images/logo/logo_tech_1.jpg">
-<meta property="og:updated_time" content="2018-08-09T02:24:43.347Z">
+<meta property="og:updated_time" content="2018-08-09T02:37:39.256Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vapor服务器之Async">
-<meta name="twitter:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+<meta name="twitter:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 Future** type。如果这是你第一次听说futures，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。 Promises和 futures有关联，但他们有着明显类型，Promises是用来创建futures。在大多数时候，你将会一直使用futures工作，接受Vapor‘s API返回的值,甚至">
 <meta name="twitter:image" content="http://yoursite.com/images/logo/logo_tech_1.jpg">
     
 
@@ -161,51 +161,132 @@
         
         
         <div class="article-entry" itemprop="articleBody">
-            <h2 id="1-Async概述"><a href="#1-Async概述" class="headerlink" title="1. Async概述"></a>1. Async概述</h2><p>你可能会注意到在Vapor的一些APIs中返回了通用的 **<figure class="highlight plain"><figcaption><span>type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Promises```**是用来创建**```futures```**。在大多数时候，你将会一直使用**```futures```**工作，接受**```Vapor‘s API```**返回的值,甚至，你不需要担心**```promises```**的创建。</div><div class="line"></div><div class="line"></div><div class="line">|  type  |   description   | mutability | methods  |</div><div class="line">|   ---  |   :-----:       | :------: | :------: |</div><div class="line">| `Future `| Reference to an object that may not be available yet. | read-only | `.map(to:_:) .flatMap(to:_:)` `do(_:) catch(_:)`|</div><div class="line">| `Promise`| A promise to provide some object asynchronously. | read/write | `succeed(_:) fail(_:)`|</div><div class="line"></div><div class="line">`Futures` 是可供选择的，建立在回调上的异步APIs，而且可以用链式、转化的方式来实现简单闭包无法做到的事情，十分强大。</div><div class="line"></div><div class="line">## 2. 转化(Transforming)</div><div class="line"></div><div class="line">正如Swift中的optionals，`futures`是可以被映射的(mapped and flat-mapped)。如下是`futures`最常用的操作：</div><div class="line"></div><div class="line">|method| signature | description |</div><div class="line">| :-:  | :-:       | :-:         |</div><div class="line">|`map` | ` to: U.Type, _: (T) -&gt; U `| 将一个future值映射为不同的value|</div><div class="line">|`flatMap`| `to: U.Type, _: (T) -&gt; Future&lt;U&gt;`| 将一个future value映射为另一个future value|</div><div class="line">| ` transform` | ` to: U ` | 将future value映射为可用的value|</div><div class="line"></div><div class="line">## 3. Map</div><div class="line"></div><div class="line">`.map(to:_:)`允许你将一个future’s value转化为其他的值，由于这个future&apos;s value可能还没获取到(可能是异步任务执行的结果)，我们必须提供一个闭包来接受这个值。</div></pre></td></tr></table></figure></p>
-<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
-<p>/// 将future string 映射为一个 integer<br>let futureInt = futureString.map(to: Int.self) { string in<br>    print(string) // The actual String<br>    return Int(string) ?? 0<br>}</p>
-<p>/// 现在我们拥有了一个future integer<br>print(futureInt) // Future<int><br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## <span class="number">4</span>. Flat Map</div><div class="line"></div><div class="line">`.flatMap(to:_:)`可以将一个future's value 转化为其它的future value。以`flat` map命名是要求你避免创建嵌套的futures(如：`Future&lt;Future&lt;T&gt;&gt;`)</div></pre></td></tr></table></figure></int></p>
-<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
-<p>/// 假定我们已经创建了一个HTTP客户端<br>let client: Client = … </p>
-<p>/// 将future string映射为future response<br>let futureResponse = futureString.flatMap(to: Response.self) { string in<br>    return client.get(string) // Future<response><br>}</response></p>
-<p>/// 输出Future<response><br>print(futureResponse) // Future<response><br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="symbol">&gt; 如果我们将上边的例子用`.map(to:_:</span>)`替换，那么产生的结果就是`Future&lt;Future&lt;Response&gt;&gt;`。</div><div class="line"></div><div class="line"></div><div class="line">## <span class="number">5</span>. Transform</div><div class="line"></div><div class="line">```.transform(_:)```允许你修改一个future's value，忽略现有的值。这对于转换Future&lt;Void&gt;的结果特别有用，很多时候，future的实际值并不是很重要。</div><div class="line"></div><div class="line">&gt; `Future&lt;Void&gt;`有时候被称作为一个信号，它唯一的目的就是在一些异步操作中，通知你完成或者失败的情况。</div></pre></td></tr></table></figure></response></response></p>
-<p>/// 假定从一些API获取一个 void future<br>let userDidSave: Future<void> = …</void></p>
-<p>/// 将void future 转换为一个HTTP状态值<br>let futureStatus = userDidSave.transform(to: HTTPStatus.ok)<br>print(futureStatus) // Future<httpstatus></httpstatus></p>
-<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">尽管我们提供了一个现有的值进行转换了，但它仍是一个转换，知道之前所有的futures都完成了(或失败了)，这个future才会完成。</div><div class="line"></div><div class="line">## <span class="number">6.</span> Chaining</div><div class="line"></div><div class="line">关于futures的转换，很重的一点就是，它可以被链式的追踪,这样你就可以很容易地表示更多的转化和子任务。接下来，我们来修改上边的例子来看看怎么利用链式表达。</div></pre></td></tr></table></figure>
-<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
-<p>/// 假定我们已经创建了一个HTTP客户端<br>let client: Client = … </p>
-<p>/// 先将string转换为URL，在将其结果转换为 response<br>let futureResponse = futureString.map(to: URL.self) { string in<br>    guard let url = URL(string: string) else {<br>        throw Abort(.badRequest, reason: “Invalid URL string: (string)”)<br>    }<br>    return url<br>}.flatMap(to: Response.self) { url in<br>    return client.get(url)<br>}</p>
-<p>print(futureResponse) // Future<response><br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">futureString首先调用map函数创建了一个临时的URL变量，接着调用flatMap函数在闭包里面完成Response的处理。</div><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; 你可以在map和flatMap的闭包里抛出异常，这样futures失败时产生的错误会被抛出。</div><div class="line"></div><div class="line">## <span class="number">7.</span> Future</div><div class="line"></div><div class="line">下面来看看Future&lt;T&gt;一些其它不常用的方法。</div><div class="line"></div><div class="line">### <span class="number">7.1</span> Do / Catch</div><div class="line"></div><div class="line">和Swift里的`do / catch`语法相似，future有`do`和`catch`方法来等待future执行的结果。</div></pre></td></tr></table></figure></response></p>
-<p>/// future string<br>let futureString: Future<string> = …</string></p>
-<p>futureString.do { string in<br>    print(string) // 实际的string<br>}.catch { error in<br>    print(error) // 捕获错误<br>}<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; `.do`和`.catch`同时工作，如果你忘记了调用`.catch`，编译器会提醒你一个未使用的结果，别忘记错误的处理。</div><div class="line">&gt; </div><div class="line"></div><div class="line">### <span class="number">7.2</span> Always</div><div class="line"></div><div class="line">你可以使用`.always`方法来添加一个回调，无论future是否成功或者失败，它都会被执行。</div></pre></td></tr></table></figure></p>
-<p>let futureString: Future<string> = …</string></p>
-<p>futureString.always {<br>    print(“The future is complete!”)<br>}<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; 一个future可以添加任意数量的回调。</div><div class="line"></div><div class="line">### <span class="number">7.3</span> Wait</div><div class="line"></div><div class="line">`.wait()`方法同步地等待future的完成，当它失败的时候，会抛出异常。</div></pre></td></tr></table></figure></p>
-<p>let futureString: Future<string> = …</string></p>
-<p>/// 在string处于就绪前会一直阻塞<br>let string = try futureString.wait()<br>print(string) /// String<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="quote">&gt; &lt;font color = red&gt; 警告：&lt;/font&gt;</span></div><div class="line"><span class="quote">&gt; </span></div><div class="line">&gt; 不要在路由闭包或控制器中调用此方法。</div><div class="line"><span class="quote">&gt; </span></div><div class="line"></div><div class="line"></div><div class="line">## 8. Promise</div><div class="line"></div><div class="line">大多数情况下，你将会通过调用Vapor's APIs来转化futures返回的值，但有些时候，可能需要你自己手动创建一个promise。</div><div class="line"></div><div class="line">创建一个promise，你需要进入到一个<span class="code">`EventLoop(事件循环)`</span>。Vapor的所有容器都有一个<span class="code">`eventLoop `</span>属性供你使用。</div></pre></td></tr></table></figure></p>
-<p>/// 创建一个新的Promise<string><br>let promiseString = req.eventLoop.newPromise(String.self)<br>print(promiseString) // Promise<string><br>print(promiseString.futureResult) // Future<string></string></string></string></p>
-<p>/// 成功关联future<br>promiseString.succeed(result: “Hello”)</p>
-<p>/// 关联future失败<br>promiseString.fail(error: …)<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 注意：</div><div class="line">&gt; </div><div class="line">&gt; 一个promise只能够被完成一次，而且后边所有的completions都会被忽略。</div><div class="line">&gt; </div><div class="line"></div><div class="line">### <span class="number">8.1</span> Thread Safety</div><div class="line"></div><div class="line">promise是线程安全的，任何线程中promise都会被完成，这就是为什么promise在被初始化的时候需要一个`event-<span class="keyword">loop</span>`。promise确保完成操作后回到它的`event-<span class="keyword">loop</span>`执行。</div><div class="line"></div><div class="line">## <span class="number">9</span>. Event <span class="keyword">Loop</span></div><div class="line"></div><div class="line">应用程序启动时，通常会为运行在CPU中的每个内核创建创建一个`even <span class="keyword">loop</span>`,每一个`even <span class="keyword">loop</span>`恰好有一个线程。如果你熟悉Node.js中的`even <span class="keyword">loop</span>`,那么Vapor中的`even <span class="keyword">loop</span>`和其类似。唯一的区别是Vapor可以在一个进程中运行多个`even <span class="keyword">loop</span>`,这是因为Swift支持多线程。</div><div class="line"></div><div class="line">每次客户端连接到服务器时，它将会被分配一个`even <span class="keyword">loop</span>`。从那时起，服务端和客户端的所有通信都会被放到同一个`even <span class="keyword">loop</span>`中(通过关联`even <span class="keyword">loop</span>`的线程)。</div><div class="line"></div><div class="line">`even <span class="keyword">loop</span>`负责跟踪每个连接的客户端的状态。如果客户端有等待读取的请求，`even <span class="keyword">loop</span>`引发阅读通知让数据可以被读取。一旦整个请求被读取，任何等待请求数据的futures都将会完成。</div><div class="line"></div><div class="line">## <span class="number">10</span>. Worker</div><div class="line"></div><div class="line">能够访问`even <span class="keyword">loop</span>`的相关操作被称作为`worker`,Vapor中的每个容器都是一个`worker`</div><div class="line"></div><div class="line">你在Vapor中使用的最常见的容器如下：</div><div class="line"></div><div class="line">* `Application `</div><div class="line">* `Request`</div><div class="line">* `Response`</div><div class="line"></div><div class="line">你可以通过这些容器的`.evenLoop`属性来访问`even-<span class="keyword">loop</span>`。</div></pre></td></tr></table></figure></p>
-<p>print(app.eventLoop) // EventLoop<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Vapor中的很多方法都需要当前的`worker`进行传递,通常会被标记为 `on: Worker`。如果你在路由闭包或控制器中，传递当前的请求或相应。如果在启动应用程序时需要`worker`,使用`Application`。</div><div class="line"></div><div class="line"></div><div class="line">## <span class="number">11.</span> Blocking</div><div class="line"></div><div class="line">有一条绝对关键的规则，如下：</div><div class="line"></div><div class="line">&gt; &lt;font color = red&gt;特别注意：&lt;/font&gt;</div><div class="line">&gt; </div><div class="line">&gt; 不要在`even loop`中直接阻塞调用。</div><div class="line">&gt; </div><div class="line"></div><div class="line">来看一个阻塞的例子 `libc.sleep(_:)`</div></pre></td></tr></table></figure></p>
-<p>router.get(“hello”) { req in<br>    /// 让当前的<code>even loop</code>的线程睡5秒<br>    sleep(5)</p>
-<pre><code>/// 一旦线程被唤醒，返回Hello, world!字符串
-return &quot;Hello, world!&quot;
-</code></pre><p>}<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">`sleep(_:)`函数可以阻塞当前线程一定时间(参数以秒为单位)。在一个`even <span class="keyword">loop</span>`中，如果你直接阻塞正在进行的任务，那么在这个阻塞工作期间，`even <span class="keyword">loop</span>`无法响应任何其他被分配的客户端。换句话说，如果你在`even <span class="keyword">loop</span>`中调用了`sleep(<span class="number">5</span>)`,所有其它被连接到`even <span class="keyword">loop</span>`的客户端将至少延时<span class="number">5</span>秒。</div><div class="line"></div><div class="line">所以确保在后台运行`阻塞`工作，当使用`非阻塞`的方式时，使用`promise`通知`even <span class="keyword">loop</span>`。</div></pre></td></tr></table></figure></p>
-<p>router.get(“hello”) { req in<br>    /// 创建一个void类型的 promise<br>    let promise = req.eventLoop.newPromise(Void.self)</p>
-<pre><code>/// 将任务分添加到全局队列(分配在后台线程)
-DispatchQueue.global() {
-    /// 在后台线程睡5秒
-    /// 这将不影响任何even-loop
-    sleep(5)
+            <h2 id="1-Async概述"><a href="#1-Async概述" class="headerlink" title="1. Async概述"></a>1. Async概述</h2><p>你可能会注意到在Vapor的一些APIs中返回了通用的 <code>Future</code>** type。如果这是你第一次听说<code>futures</code>，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。</p>
+<p><code>Promises</code>和 <code>futures</code>有关联，但他们有着明显类型，<code>Promises</code>是用来创建<code>futures</code>。在大多数时候，你将会一直使用<code>futures</code>工作，接受<code>Vapor‘s API</code>返回的值,甚至，你不需要担心<code>promises</code>的创建。</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th style="text-align:center">description</th>
+<th style="text-align:center">mutability</th>
+<th style="text-align:center">methods</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Future</code></td>
+<td style="text-align:center">Reference to an object that may not be available yet.</td>
+<td style="text-align:center">read-only</td>
+<td style="text-align:center"><code>.map(to:_:) .flatMap(to:_:)</code> <code>do(_:) catch(_:)</code></td>
+</tr>
+<tr>
+<td><code>Promise</code></td>
+<td style="text-align:center">A promise to provide some object asynchronously.</td>
+<td style="text-align:center">read/write</td>
+<td style="text-align:center"><code>succeed(_:) fail(_:)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>Futures</code> 是可供选择的，建立在回调上的异步APIs，而且可以用链式、转化的方式来实现简单闭包无法做到的事情，十分强大。</p>
+<h2 id="2-转化-Transforming"><a href="#2-转化-Transforming" class="headerlink" title="2. 转化(Transforming)"></a>2. 转化(Transforming)</h2><p>正如Swift中的optionals，<code>futures</code>是可以被映射的(mapped and flat-mapped)。如下是<code>futures</code>最常用的操作：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">method</th>
+<th style="text-align:center">signature</th>
+<th style="text-align:center">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>map</code></td>
+<td style="text-align:center"><code>to: U.Type, _: (T) -&gt; U</code></td>
+<td style="text-align:center">将一个future值映射为不同的value</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>flatMap</code></td>
+<td style="text-align:center"><code>to: U.Type, _: (T) -&gt; Future&lt;U&gt;</code></td>
+<td style="text-align:center">将一个future value映射为另一个future value</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>transform</code></td>
+<td style="text-align:center"><code>to: U</code></td>
+<td style="text-align:center">将future value映射为可用的value</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-Map"><a href="#3-Map" class="headerlink" title="3. Map"></a>3. Map</h2><p><code>.map(to:_:)</code>允许你将一个future’s value转化为其他的值，由于这个future’s value可能还没获取到(可能是异步任务执行的结果)，我们必须提供一个闭包来接受这个值。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 假定我们从某写API获取到了一个 future string</span></div><div class="line"><span class="keyword">let</span> futureString: Future&lt;<span class="built_in">String</span>&gt; = <span class="params">...</span></div><div class="line"></div><div class="line"><span class="comment">/// 将future string 映射为一个 integer</span></div><div class="line"><span class="keyword">let</span> futureInt = futureString.<span class="built_in">map</span>(<span class="keyword">to</span>: Int.<span class="built_in">self</span>) &#123; <span class="built_in">string</span> <span class="keyword">in</span></div><div class="line">    print(<span class="built_in">string</span>) <span class="comment">// The actual String</span></div><div class="line">    <span class="keyword">return</span> Int(<span class="built_in">string</span>) ?? <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// 现在我们拥有了一个future integer</span></div><div class="line">print(futureInt) <span class="comment">// Future&lt;Int&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="4-Flat-Map"><a href="#4-Flat-Map" class="headerlink" title="4. Flat Map"></a>4. Flat Map</h2><p><code>.flatMap(to:_:)</code>可以将一个future’s value 转化为其它的future value。以<code>flat</code> map命名是要求你避免创建嵌套的futures(如：<code>Future&lt;Future&lt;T&gt;&gt;</code>)</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 假定我们从某写API获取到了一个 future string</span></div><div class="line"><span class="keyword">let</span> futureString: Future&lt;<span class="built_in">String</span>&gt; = <span class="params">...</span></div><div class="line"></div><div class="line"><span class="comment">/// 假定我们已经创建了一个HTTP客户端</span></div><div class="line"><span class="keyword">let</span> client: Client = <span class="params">...</span> </div><div class="line"></div><div class="line"><span class="comment">/// 将future string映射为future response</span></div><div class="line"><span class="keyword">let</span> futureResponse = futureString.flatMap(<span class="keyword">to</span>: Response.<span class="built_in">self</span>) &#123; <span class="built_in">string</span> <span class="keyword">in</span></div><div class="line">    <span class="keyword">return</span> client.get(<span class="built_in">string</span>) <span class="comment">// Future&lt;Response&gt;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// 输出Future&lt;Response&gt;</span></div><div class="line">print(futureResponse) <span class="comment">// Future&lt;Response&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果我们将上边的例子用<code>.map(to:_:)</code>替换，那么产生的结果就是<code>Future&lt;Future&lt;Response&gt;&gt;</code>。</p>
+</blockquote>
+<h2 id="5-Transform"><a href="#5-Transform" class="headerlink" title="5. Transform"></a>5. Transform</h2><p><code>.transform(_:)</code>允许你修改一个future’s value，忽略现有的值。这对于转换Future<void>的结果特别有用，很多时候，future的实际值并不是很重要。</void></p>
+<blockquote>
+<p><code>Future&lt;Void&gt;</code>有时候被称作为一个信号，它唯一的目的就是在一些异步操作中，通知你完成或者失败的情况。</p>
+</blockquote>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 假定从一些API获取一个 void future</span></div><div class="line"><span class="keyword">let</span> userDidSave: Future&lt;<span class="literal">Void</span>&gt; = <span class="params">...</span></div><div class="line"></div><div class="line"><span class="comment">/// 将void future 转换为一个HTTP状态值</span></div><div class="line"><span class="keyword">let</span> futureStatus = userDidSave.transform(<span class="keyword">to</span>: HTTPStatus.ok)</div><div class="line">print(futureStatus) <span class="comment">// Future&lt;HTTPStatus&gt;</span></div></pre></td></tr></table></figure>
+<p>尽管我们提供了一个现有的值进行转换了，但它仍是一个转换，知道之前所有的futures都完成了(或失败了)，这个future才会完成。</p>
+<h2 id="6-Chaining"><a href="#6-Chaining" class="headerlink" title="6. Chaining"></a>6. Chaining</h2><p>关于futures的转换，很重的一点就是，它可以被链式的追踪,这样你就可以很容易地表示更多的转化和子任务。接下来，我们来修改上边的例子来看看怎么利用链式表达。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 假定我们从某写API获取到了一个 future string</span></div><div class="line"><span class="keyword">let</span> futureString: Future&lt;<span class="built_in">String</span>&gt; = <span class="params">...</span></div><div class="line"></div><div class="line"><span class="comment">/// 假定我们已经创建了一个HTTP客户端</span></div><div class="line"><span class="keyword">let</span> client: Client = <span class="params">...</span> </div><div class="line"></div><div class="line"><span class="comment">/// 先将string转换为URL，在将其结果转换为 response</span></div><div class="line"><span class="keyword">let</span> futureResponse = futureString.<span class="built_in">map</span>(<span class="keyword">to</span>: URL.<span class="built_in">self</span>) &#123; <span class="built_in">string</span> <span class="keyword">in</span></div><div class="line">    guard <span class="keyword">let</span> url = URL(<span class="built_in">string</span>: <span class="built_in">string</span>) <span class="keyword">else</span> &#123;</div><div class="line">        throw <span class="keyword">Abort</span>(.badRequest, reason: <span class="string">"Invalid URL string: \(string)"</span>)</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> url</div><div class="line">&#125;.flatMap(<span class="keyword">to</span>: Response.<span class="built_in">self</span>) &#123; url <span class="keyword">in</span></div><div class="line">    <span class="keyword">return</span> client.get(url)</div><div class="line">&#125;</div><div class="line"></div><div class="line">print(futureResponse) <span class="comment">// Future&lt;Response&gt;</span></div></pre></td></tr></table></figure>
+<p>futureString首先调用map函数创建了一个临时的URL变量，接着调用flatMap函数在闭包里面完成Response的处理。</p>
+<blockquote>
+<p>提示：</p>
+<p>你可以在map和flatMap的闭包里抛出异常，这样futures失败时产生的错误会被抛出。</p>
+</blockquote>
+<h2 id="7-Future"><a href="#7-Future" class="headerlink" title="7. Future"></a>7. Future</h2><p>下面来看看Future<t>一些其它不常用的方法。</t></p>
+<h3 id="7-1-Do-Catch"><a href="#7-1-Do-Catch" class="headerlink" title="7.1 Do / Catch"></a>7.1 Do / Catch</h3><p>和Swift里的<code>do / catch</code>语法相似，future有<code>do</code>和<code>catch</code>方法来等待future执行的结果。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">/// future <span class="built_in">string</span></div><div class="line"><span class="built_in">let</span> futureString: Future&lt;String&gt; = ...</div><div class="line"></div><div class="line">futureString.<span class="keyword">do</span> &#123; <span class="built_in">string</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="built_in">string</span>) // 实际的<span class="built_in">string</span></div><div class="line">&#125;.<span class="built_in">catch</span> &#123; <span class="built_in">error</span> <span class="keyword">in</span></div><div class="line">    <span class="built_in">print</span>(<span class="built_in">error</span>) // 捕获错误</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>提示：</p>
+<p><code>.do</code>和<code>.catch</code>同时工作，如果你忘记了调用<code>.catch</code>，编译器会提醒你一个未使用的结果，别忘记错误的处理。</p>
+</blockquote>
+<h3 id="7-2-Always"><a href="#7-2-Always" class="headerlink" title="7.2 Always"></a>7.2 Always</h3><p>你可以使用<code>.always</code>方法来添加一个回调，无论future是否成功或者失败，它都会被执行。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> futureStrin<span class="variable">g:</span> Future<span class="symbol">&lt;String&gt;</span> = ...</div><div class="line"></div><div class="line">futureString.always &#123;</div><div class="line">    <span class="keyword">print</span>(<span class="string">"The future is complete!"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>提示：</p>
+<p>一个future可以添加任意数量的回调。</p>
+</blockquote>
+<h3 id="7-3-Wait"><a href="#7-3-Wait" class="headerlink" title="7.3 Wait"></a>7.3 Wait</h3><p><code>.wait()</code>方法同步地等待future的完成，当它失败的时候，会抛出异常。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> futureString: Future&lt;<span class="keyword">String</span>&gt; = ...</div><div class="line"></div><div class="line"><span class="comment">/// 在string处于就绪前会一直阻塞</span></div><div class="line"><span class="keyword">let</span> <span class="keyword">string</span> = try futureString.<span class="built_in">wait</span>()</div><div class="line"><span class="keyword">print</span>(<span class="keyword">string</span>) <span class="comment">/// String</span></div></pre></td></tr></table></figure>
+<blockquote>
+<font color="red"> 警告：</font>
 
-    /// 当阻塞工作完成
-    /// 完成promise及其关联的future
-    promise.succeed()
-}
+<p>不要在路由闭包或控制器中调用此方法。</p>
+</blockquote>
+<h2 id="8-Promise"><a href="#8-Promise" class="headerlink" title="8. Promise"></a>8. Promise</h2><p>大多数情况下，你将会通过调用Vapor’s APIs来转化futures返回的值，但有些时候，可能需要你自己手动创建一个promise。</p>
+<p>创建一个promise，你需要进入到一个<code>EventLoop(事件循环)</code>。Vapor的所有容器都有一个<code>eventLoop</code>属性供你使用。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 创建一个新的Promise&lt;String&gt;</span></div><div class="line">let promiseString = req<span class="selector-class">.eventLoop</span><span class="selector-class">.newPromise</span>(String.self) </div><div class="line"><span class="function"><span class="title">print</span><span class="params">(promiseString)</span></span> <span class="comment">// Promise&lt;String&gt;</span></div><div class="line"><span class="function"><span class="title">print</span><span class="params">(promiseString.futureResult)</span></span> <span class="comment">// Future&lt;String&gt;</span></div><div class="line"></div><div class="line"><span class="comment">/// 成功关联future</span></div><div class="line">promiseString.succeed(result: <span class="string">"Hello"</span>)</div><div class="line"></div><div class="line"><span class="comment">/// 关联future失败</span></div><div class="line">promiseString.fail(error: ...)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：</p>
+<p>一个promise只能够被完成一次，而且后边所有的completions都会被忽略。</p>
+</blockquote>
+<h3 id="8-1-Thread-Safety"><a href="#8-1-Thread-Safety" class="headerlink" title="8.1 Thread Safety"></a>8.1 Thread Safety</h3><p>promise是线程安全的，任何线程中promise都会被完成，这就是为什么promise在被初始化的时候需要一个<code>event-loop</code>。promise确保完成操作后回到它的<code>event-loop</code>执行。</p>
+<h2 id="9-Event-Loop"><a href="#9-Event-Loop" class="headerlink" title="9. Event Loop"></a>9. Event Loop</h2><p>应用程序启动时，通常会为运行在CPU中的每个内核创建创建一个<code>even loop</code>,每一个<code>even loop</code>恰好有一个线程。如果你熟悉Node.js中的<code>even loop</code>,那么Vapor中的<code>even loop</code>和其类似。唯一的区别是Vapor可以在一个进程中运行多个<code>even loop</code>,这是因为Swift支持多线程。</p>
+<p>每次客户端连接到服务器时，它将会被分配一个<code>even loop</code>。从那时起，服务端和客户端的所有通信都会被放到同一个<code>even loop</code>中(通过关联<code>even loop</code>的线程)。</p>
+<p><code>even loop</code>负责跟踪每个连接的客户端的状态。如果客户端有等待读取的请求，<code>even loop</code>引发阅读通知让数据可以被读取。一旦整个请求被读取，任何等待请求数据的futures都将会完成。</p>
+<h2 id="10-Worker"><a href="#10-Worker" class="headerlink" title="10. Worker"></a>10. Worker</h2><p>能够访问<code>even loop</code>的相关操作被称作为<code>worker</code>,Vapor中的每个容器都是一个<code>worker</code></p>
+<p>你在Vapor中使用的最常见的容器如下：</p>
+<ul>
+<li><code>Application</code></li>
+<li><code>Request</code></li>
+<li><code>Response</code></li>
+</ul>
+<p>你可以通过这些容器的<code>.evenLoop</code>属性来访问<code>even-loop</code>。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">print</span><span class="params">(app.eventLoop)</span></span> <span class="comment">// EventLoop</span></div></pre></td></tr></table></figure>
+<p>Vapor中的很多方法都需要当前的<code>worker</code>进行传递,通常会被标记为 <code>on: Worker</code>。如果你在路由闭包或控制器中，传递当前的请求或相应。如果在启动应用程序时需要<code>worker</code>,使用<code>Application</code>。</p>
+<h2 id="11-Blocking"><a href="#11-Blocking" class="headerlink" title="11. Blocking"></a>11. Blocking</h2><p>有一条绝对关键的规则，如下：</p>
+<blockquote>
+<font color="red">特别注意：</font>
 
-/// 等待future以待完成, 
-/// 然后转换结果
-return promise.futureResult.transform(to: &quot;Hello, world!&quot;)
-</code></pre><p>}<br>```</p>
+<p>不要在<code>even loop</code>中直接阻塞调用。</p>
+</blockquote>
+<p>来看一个阻塞的例子 <code>libc.sleep(_:)</code></p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">router.<span class="keyword">get</span>(<span class="string">"hello"</span>) &#123; req <span class="keyword">in</span></div><div class="line">    <span class="comment"><span class="markdown">/// 让当前的<span class="code">`even loop`</span>的线程睡5秒</span></span></div><div class="line">    sleep(<span class="number">5</span>)</div><div class="line"></div><div class="line">    <span class="comment"><span class="markdown">/// 一旦线程被唤醒，返回Hello, world!字符串</span></span></div><div class="line">    <span class="keyword">return</span> <span class="string">"Hello, world!"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>sleep(_:)</code>函数可以阻塞当前线程一定时间(参数以秒为单位)。在一个<code>even loop</code>中，如果你直接阻塞正在进行的任务，那么在这个阻塞工作期间，<code>even loop</code>无法响应任何其他被分配的客户端。换句话说，如果你在<code>even loop</code>中调用了<code>sleep(5)</code>,所有其它被连接到<code>even loop</code>的客户端将至少延时5秒。</p>
+<p>所以确保在后台运行<code>阻塞</code>工作，当使用<code>非阻塞</code>的方式时，使用<code>promise</code>通知<code>even loop</code>。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">router.get(<span class="string">"hello"</span>) &#123; req <span class="keyword">in</span></div><div class="line">    <span class="comment">/// 创建一个void类型的 promise</span></div><div class="line">    <span class="keyword">let</span> promise = req.eventLoop.newPromise(<span class="literal">Void</span>.<span class="built_in">self</span>)</div><div class="line"></div><div class="line">    <span class="comment">/// 将任务分添加到全局队列(分配在后台线程)</span></div><div class="line">    DispatchQueue.<span class="built_in">global</span>() &#123;</div><div class="line">        <span class="comment">/// 在后台线程睡5秒</span></div><div class="line">        <span class="comment">/// 这将不影响任何even-loop</span></div><div class="line">        sleep(<span class="number">5</span>)</div><div class="line"></div><div class="line">        <span class="comment">/// 当阻塞工作完成</span></div><div class="line">        <span class="comment">/// 完成promise及其关联的future</span></div><div class="line">        promise.succeed()</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/// 等待future以待完成, </span></div><div class="line">    <span class="comment">/// 然后转换结果</span></div><div class="line">    <span class="keyword">return</span> promise.futureResult.transform(<span class="keyword">to</span>: <span class="string">"Hello, world!"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>并非所有的阻塞调用如<code>sleep(_:)</code>那么明显，如果你怀疑你使用的调用可能会发生阻塞，那么你需要查看方法的内部或者寻求他人帮助，如果函数正在执行磁盘操作或网络IO操作并使用同步API(没有回调或期futures)，那么很可能会阻塞。</p>
 <blockquote>
 <p>提示：</p>
@@ -218,7 +299,7 @@ return promise.futureResult.transform(to: &quot;Hello, world!&quot;)
 
 
 
-    <a data-url="http://yoursite.com/2018/08/07/Vapor服务器之Async/" data-id="cjkly0p680000jkynkdvc0lwq" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://yoursite.com/2018/08/07/Vapor服务器之Async/" data-id="cjklyd2qr0000n4ynh7q2knf8" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         $('body').on('click', function() {
