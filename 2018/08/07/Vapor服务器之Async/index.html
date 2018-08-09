@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Vapor服务器之Async | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="Swift,服务端" />
+    
+    <meta name="description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+<meta name="keywords" content="Swift,服务端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vapor服务器之Async">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/Vapor服务器之Async/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/logo/logo_tech_1.jpg">
+<meta property="og:updated_time" content="2018-08-09T02:24:43.347Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vapor服务器之Async">
+<meta name="twitter:description" content="1. Async概述你可能会注意到在Vapor的一些APIs中返回了通用的 **type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。123456789101112131415161718192021222324**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Pr">
+<meta name="twitter:image" content="http://yoursite.com/images/logo/logo_tech_1.jpg">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/technology/">技术</a>
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-Vapor服务器之Async" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        Vapor服务器之Async
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2018/08/07/Vapor服务器之Async/" class="article-date">
+    <time datetime="2018-08-07T09:15:14.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Swift/">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/服务端/">服务端</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h2 id="1-Async概述"><a href="#1-Async概述" class="headerlink" title="1. Async概述"></a>1. Async概述</h2><p>你可能会注意到在Vapor的一些APIs中返回了通用的 **<figure class="highlight plain"><figcaption><span>type。如果这是你第一次听说```futures```，可能你会有点小疑惑，不过不用担心，vapor使它们使用起来很容易。</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">**```Promises```** 和 **```futures```**有关联，但他们有着明显类型，**```Promises```**是用来创建**```futures```**。在大多数时候，你将会一直使用**```futures```**工作，接受**```Vapor‘s API```**返回的值,甚至，你不需要担心**```promises```**的创建。</div><div class="line"></div><div class="line"></div><div class="line">|  type  |   description   | mutability | methods  |</div><div class="line">|   ---  |   :-----:       | :------: | :------: |</div><div class="line">| `Future `| Reference to an object that may not be available yet. | read-only | `.map(to:_:) .flatMap(to:_:)` `do(_:) catch(_:)`|</div><div class="line">| `Promise`| A promise to provide some object asynchronously. | read/write | `succeed(_:) fail(_:)`|</div><div class="line"></div><div class="line">`Futures` 是可供选择的，建立在回调上的异步APIs，而且可以用链式、转化的方式来实现简单闭包无法做到的事情，十分强大。</div><div class="line"></div><div class="line">## 2. 转化(Transforming)</div><div class="line"></div><div class="line">正如Swift中的optionals，`futures`是可以被映射的(mapped and flat-mapped)。如下是`futures`最常用的操作：</div><div class="line"></div><div class="line">|method| signature | description |</div><div class="line">| :-:  | :-:       | :-:         |</div><div class="line">|`map` | ` to: U.Type, _: (T) -&gt; U `| 将一个future值映射为不同的value|</div><div class="line">|`flatMap`| `to: U.Type, _: (T) -&gt; Future&lt;U&gt;`| 将一个future value映射为另一个future value|</div><div class="line">| ` transform` | ` to: U ` | 将future value映射为可用的value|</div><div class="line"></div><div class="line">## 3. Map</div><div class="line"></div><div class="line">`.map(to:_:)`允许你将一个future’s value转化为其他的值，由于这个future&apos;s value可能还没获取到(可能是异步任务执行的结果)，我们必须提供一个闭包来接受这个值。</div></pre></td></tr></table></figure></p>
+<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
+<p>/// 将future string 映射为一个 integer<br>let futureInt = futureString.map(to: Int.self) { string in<br>    print(string) // The actual String<br>    return Int(string) ?? 0<br>}</p>
+<p>/// 现在我们拥有了一个future integer<br>print(futureInt) // Future<int><br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## <span class="number">4</span>. Flat Map</div><div class="line"></div><div class="line">`.flatMap(to:_:)`可以将一个future's value 转化为其它的future value。以`flat` map命名是要求你避免创建嵌套的futures(如：`Future&lt;Future&lt;T&gt;&gt;`)</div></pre></td></tr></table></figure></int></p>
+<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
+<p>/// 假定我们已经创建了一个HTTP客户端<br>let client: Client = … </p>
+<p>/// 将future string映射为future response<br>let futureResponse = futureString.flatMap(to: Response.self) { string in<br>    return client.get(string) // Future<response><br>}</response></p>
+<p>/// 输出Future<response><br>print(futureResponse) // Future<response><br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="symbol">&gt; 如果我们将上边的例子用`.map(to:_:</span>)`替换，那么产生的结果就是`Future&lt;Future&lt;Response&gt;&gt;`。</div><div class="line"></div><div class="line"></div><div class="line">## <span class="number">5</span>. Transform</div><div class="line"></div><div class="line">```.transform(_:)```允许你修改一个future's value，忽略现有的值。这对于转换Future&lt;Void&gt;的结果特别有用，很多时候，future的实际值并不是很重要。</div><div class="line"></div><div class="line">&gt; `Future&lt;Void&gt;`有时候被称作为一个信号，它唯一的目的就是在一些异步操作中，通知你完成或者失败的情况。</div></pre></td></tr></table></figure></response></response></p>
+<p>/// 假定从一些API获取一个 void future<br>let userDidSave: Future<void> = …</void></p>
+<p>/// 将void future 转换为一个HTTP状态值<br>let futureStatus = userDidSave.transform(to: HTTPStatus.ok)<br>print(futureStatus) // Future<httpstatus></httpstatus></p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">尽管我们提供了一个现有的值进行转换了，但它仍是一个转换，知道之前所有的futures都完成了(或失败了)，这个future才会完成。</div><div class="line"></div><div class="line">## <span class="number">6.</span> Chaining</div><div class="line"></div><div class="line">关于futures的转换，很重的一点就是，它可以被链式的追踪,这样你就可以很容易地表示更多的转化和子任务。接下来，我们来修改上边的例子来看看怎么利用链式表达。</div></pre></td></tr></table></figure>
+<p>/// 假定我们从某写API获取到了一个 future string<br>let futureString: Future<string> = …</string></p>
+<p>/// 假定我们已经创建了一个HTTP客户端<br>let client: Client = … </p>
+<p>/// 先将string转换为URL，在将其结果转换为 response<br>let futureResponse = futureString.map(to: URL.self) { string in<br>    guard let url = URL(string: string) else {<br>        throw Abort(.badRequest, reason: “Invalid URL string: (string)”)<br>    }<br>    return url<br>}.flatMap(to: Response.self) { url in<br>    return client.get(url)<br>}</p>
+<p>print(futureResponse) // Future<response><br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">futureString首先调用map函数创建了一个临时的URL变量，接着调用flatMap函数在闭包里面完成Response的处理。</div><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; 你可以在map和flatMap的闭包里抛出异常，这样futures失败时产生的错误会被抛出。</div><div class="line"></div><div class="line">## <span class="number">7.</span> Future</div><div class="line"></div><div class="line">下面来看看Future&lt;T&gt;一些其它不常用的方法。</div><div class="line"></div><div class="line">### <span class="number">7.1</span> Do / Catch</div><div class="line"></div><div class="line">和Swift里的`do / catch`语法相似，future有`do`和`catch`方法来等待future执行的结果。</div></pre></td></tr></table></figure></response></p>
+<p>/// future string<br>let futureString: Future<string> = …</string></p>
+<p>futureString.do { string in<br>    print(string) // 实际的string<br>}.catch { error in<br>    print(error) // 捕获错误<br>}<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; `.do`和`.catch`同时工作，如果你忘记了调用`.catch`，编译器会提醒你一个未使用的结果，别忘记错误的处理。</div><div class="line">&gt; </div><div class="line"></div><div class="line">### <span class="number">7.2</span> Always</div><div class="line"></div><div class="line">你可以使用`.always`方法来添加一个回调，无论future是否成功或者失败，它都会被执行。</div></pre></td></tr></table></figure></p>
+<p>let futureString: Future<string> = …</string></p>
+<p>futureString.always {<br>    print(“The future is complete!”)<br>}<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 提示：</div><div class="line">&gt; </div><div class="line">&gt; 一个future可以添加任意数量的回调。</div><div class="line"></div><div class="line">### <span class="number">7.3</span> Wait</div><div class="line"></div><div class="line">`.wait()`方法同步地等待future的完成，当它失败的时候，会抛出异常。</div></pre></td></tr></table></figure></p>
+<p>let futureString: Future<string> = …</string></p>
+<p>/// 在string处于就绪前会一直阻塞<br>let string = try futureString.wait()<br>print(string) /// String<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="quote">&gt; &lt;font color = red&gt; 警告：&lt;/font&gt;</span></div><div class="line"><span class="quote">&gt; </span></div><div class="line">&gt; 不要在路由闭包或控制器中调用此方法。</div><div class="line"><span class="quote">&gt; </span></div><div class="line"></div><div class="line"></div><div class="line">## 8. Promise</div><div class="line"></div><div class="line">大多数情况下，你将会通过调用Vapor's APIs来转化futures返回的值，但有些时候，可能需要你自己手动创建一个promise。</div><div class="line"></div><div class="line">创建一个promise，你需要进入到一个<span class="code">`EventLoop(事件循环)`</span>。Vapor的所有容器都有一个<span class="code">`eventLoop `</span>属性供你使用。</div></pre></td></tr></table></figure></p>
+<p>/// 创建一个新的Promise<string><br>let promiseString = req.eventLoop.newPromise(String.self)<br>print(promiseString) // Promise<string><br>print(promiseString.futureResult) // Future<string></string></string></string></p>
+<p>/// 成功关联future<br>promiseString.succeed(result: “Hello”)</p>
+<p>/// 关联future失败<br>promiseString.fail(error: …)<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; 注意：</div><div class="line">&gt; </div><div class="line">&gt; 一个promise只能够被完成一次，而且后边所有的completions都会被忽略。</div><div class="line">&gt; </div><div class="line"></div><div class="line">### <span class="number">8.1</span> Thread Safety</div><div class="line"></div><div class="line">promise是线程安全的，任何线程中promise都会被完成，这就是为什么promise在被初始化的时候需要一个`event-<span class="keyword">loop</span>`。promise确保完成操作后回到它的`event-<span class="keyword">loop</span>`执行。</div><div class="line"></div><div class="line">## <span class="number">9</span>. Event <span class="keyword">Loop</span></div><div class="line"></div><div class="line">应用程序启动时，通常会为运行在CPU中的每个内核创建创建一个`even <span class="keyword">loop</span>`,每一个`even <span class="keyword">loop</span>`恰好有一个线程。如果你熟悉Node.js中的`even <span class="keyword">loop</span>`,那么Vapor中的`even <span class="keyword">loop</span>`和其类似。唯一的区别是Vapor可以在一个进程中运行多个`even <span class="keyword">loop</span>`,这是因为Swift支持多线程。</div><div class="line"></div><div class="line">每次客户端连接到服务器时，它将会被分配一个`even <span class="keyword">loop</span>`。从那时起，服务端和客户端的所有通信都会被放到同一个`even <span class="keyword">loop</span>`中(通过关联`even <span class="keyword">loop</span>`的线程)。</div><div class="line"></div><div class="line">`even <span class="keyword">loop</span>`负责跟踪每个连接的客户端的状态。如果客户端有等待读取的请求，`even <span class="keyword">loop</span>`引发阅读通知让数据可以被读取。一旦整个请求被读取，任何等待请求数据的futures都将会完成。</div><div class="line"></div><div class="line">## <span class="number">10</span>. Worker</div><div class="line"></div><div class="line">能够访问`even <span class="keyword">loop</span>`的相关操作被称作为`worker`,Vapor中的每个容器都是一个`worker`</div><div class="line"></div><div class="line">你在Vapor中使用的最常见的容器如下：</div><div class="line"></div><div class="line">* `Application `</div><div class="line">* `Request`</div><div class="line">* `Response`</div><div class="line"></div><div class="line">你可以通过这些容器的`.evenLoop`属性来访问`even-<span class="keyword">loop</span>`。</div></pre></td></tr></table></figure></p>
+<p>print(app.eventLoop) // EventLoop<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Vapor中的很多方法都需要当前的`worker`进行传递,通常会被标记为 `on: Worker`。如果你在路由闭包或控制器中，传递当前的请求或相应。如果在启动应用程序时需要`worker`,使用`Application`。</div><div class="line"></div><div class="line"></div><div class="line">## <span class="number">11.</span> Blocking</div><div class="line"></div><div class="line">有一条绝对关键的规则，如下：</div><div class="line"></div><div class="line">&gt; &lt;font color = red&gt;特别注意：&lt;/font&gt;</div><div class="line">&gt; </div><div class="line">&gt; 不要在`even loop`中直接阻塞调用。</div><div class="line">&gt; </div><div class="line"></div><div class="line">来看一个阻塞的例子 `libc.sleep(_:)`</div></pre></td></tr></table></figure></p>
+<p>router.get(“hello”) { req in<br>    /// 让当前的<code>even loop</code>的线程睡5秒<br>    sleep(5)</p>
+<pre><code>/// 一旦线程被唤醒，返回Hello, world!字符串
+return &quot;Hello, world!&quot;
+</code></pre><p>}<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">`sleep(_:)`函数可以阻塞当前线程一定时间(参数以秒为单位)。在一个`even <span class="keyword">loop</span>`中，如果你直接阻塞正在进行的任务，那么在这个阻塞工作期间，`even <span class="keyword">loop</span>`无法响应任何其他被分配的客户端。换句话说，如果你在`even <span class="keyword">loop</span>`中调用了`sleep(<span class="number">5</span>)`,所有其它被连接到`even <span class="keyword">loop</span>`的客户端将至少延时<span class="number">5</span>秒。</div><div class="line"></div><div class="line">所以确保在后台运行`阻塞`工作，当使用`非阻塞`的方式时，使用`promise`通知`even <span class="keyword">loop</span>`。</div></pre></td></tr></table></figure></p>
+<p>router.get(“hello”) { req in<br>    /// 创建一个void类型的 promise<br>    let promise = req.eventLoop.newPromise(Void.self)</p>
+<pre><code>/// 将任务分添加到全局队列(分配在后台线程)
+DispatchQueue.global() {
+    /// 在后台线程睡5秒
+    /// 这将不影响任何even-loop
+    sleep(5)
+
+    /// 当阻塞工作完成
+    /// 完成promise及其关联的future
+    promise.succeed()
+}
+
+/// 等待future以待完成, 
+/// 然后转换结果
+return promise.futureResult.transform(to: &quot;Hello, world!&quot;)
+</code></pre><p>}<br>```</p>
+<p>并非所有的阻塞调用如<code>sleep(_:)</code>那么明显，如果你怀疑你使用的调用可能会发生阻塞，那么你需要查看方法的内部或者寻求他人帮助，如果函数正在执行磁盘操作或网络IO操作并使用同步API(没有回调或期futures)，那么很可能会阻塞。</p>
+<blockquote>
+<p>提示：</p>
+<p>如果阻塞工作是你应用程序的核心部分，您应该考虑使<code>BlockingIOThreadPool</code>来控制创建来执行阻塞工作的线程数量,这将帮助您避免在执行阻塞工作时占用CPU时间的<code>even loop</code>。</p>
+</blockquote>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2018/08/07/Vapor服务器之Async/" data-id="cjkly0p680000jkynkdvc0lwq" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2018/01/31/technology/Python多进程基本操作/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">Python进程和线程的基本操作</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/08/07/Vapor服务器之Async/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_1.jpg)" alt="Vapor服务器之Async" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/08/07/Vapor服务器之Async/" class="title">Vapor服务器之Async</a></p>
+                            <p class="item-date"><time datetime="2018-08-07T09:15:14.000Z" itemprop="datePublished">2018-08-07</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/31/technology/Python多进程基本操作/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_11.jpg)" alt="Python进程和线程的基本操作" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/31/technology/Python多进程基本操作/" class="title">Python进程和线程的基本操作</a></p>
+                            <p class="item-date"><time datetime="2018-01-31T01:30:31.000Z" itemprop="datePublished">2018-01-31</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/30/technology/解决Python编程蛋疼的缩进问题报错/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_3.jpg)" alt="解决Python编程蛋疼的缩进问题报错" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/30/technology/解决Python编程蛋疼的缩进问题报错/" class="title">解决Python编程蛋疼的缩进问题报错</a></p>
+                            <p class="item-date"><time datetime="2018-01-30T02:55:03.000Z" itemprop="datePublished">2018-01-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_7.jpg)" alt="通过Contacts.Framework获取设备通讯录(iOS9.0以后)" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/01/19/technology/通过Contacts.Framework获取设备通讯录(iOS9.0以后)/" class="title">通过Contacts.Framework获取设备通讯录(iOS9.0以后)</a></p>
+                            <p class="item-date"><time datetime="2018-01-19T03:13:12.000Z" itemprop="datePublished">2018-01-19</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_8.jpg)" alt="Xcode中引入cocos2d-x" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2017/08/26/technology/Xcode中引入cocos2d-x/" class="title">Xcode中引入cocos2d-x</a></p>
+                            <p class="item-date"><time datetime="2017-08-26T06:56:31.000Z" itemprop="datePublished">2017-08-26</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">5</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swift/">Swift</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图/">图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/服务端/">服务端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/C语言/" style="font-size: 20px;">C语言</a> <a href="/tags/Python/" style="font-size: 12.5px;">Python</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 17.5px;">iOS</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/图/" style="font-size: 10px;">图</a> <a href="/tags/数据结构/" style="font-size: 12.5px;">数据结构</a> <a href="/tags/服务端/" style="font-size: 10px;">服务端</a> <a href="/tags/算法/" style="font-size: 17.5px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 15px;">链表</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2018 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2018/08/07/Vapor服务器之Async/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
