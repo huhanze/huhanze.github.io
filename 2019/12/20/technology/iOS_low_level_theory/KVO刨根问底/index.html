@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>KVO刨根问底 | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="" />
+    
+    <meta name="description" content="1. KVO（Key-Value-Observer）在iOS中KVO经常被用来监听对象属性的改变，在某些地方合理使用KVO可以轻松的搞定一些问题。为什么要合理使用？接下来从KVO的本质来了解其利与弊。 KVO从字面意思理解就是键值观察者，key就是对象的某个属性， value是该属性的值，Observer就是监听 key 对应 value 的变化。 一般在项目中怎么使用呢？我们来定义一个OC类，这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVO刨根问底">
+<meta property="og:url" content="http://yoursite.com/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="1. KVO（Key-Value-Observer）在iOS中KVO经常被用来监听对象属性的改变，在某些地方合理使用KVO可以轻松的搞定一些问题。为什么要合理使用？接下来从KVO的本质来了解其利与弊。 KVO从字面意思理解就是键值观察者，key就是对象的某个属性， value是该属性的值，Observer就是监听 key 对应 value 的变化。 一般在项目中怎么使用呢？我们来定义一个OC类，这">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/12/20/images/kvo_01.png">
+<meta property="og:updated_time" content="2020-03-05T12:03:42.017Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KVO刨根问底">
+<meta name="twitter:description" content="1. KVO（Key-Value-Observer）在iOS中KVO经常被用来监听对象属性的改变，在某些地方合理使用KVO可以轻松的搞定一些问题。为什么要合理使用？接下来从KVO的本质来了解其利与弊。 KVO从字面意思理解就是键值观察者，key就是对象的某个属性， value是该属性的值，Observer就是监听 key 对应 value 的变化。 一般在项目中怎么使用呢？我们来定义一个OC类，这">
+<meta name="twitter:image" content="http://yoursite.com/2019/12/20/images/kvo_01.png">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    未分类
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-technology/iOS_low_level_theory/KVO刨根问底" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        KVO刨根问底
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" class="article-date">
+    <time datetime="2019-12-20T08:39:31.000Z" itemprop="datePublished">2019-12-20</time>
+</a>
+                
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <h3 id="1-KVO（Key-Value-Observer）"><a href="#1-KVO（Key-Value-Observer）" class="headerlink" title="1. KVO（Key-Value-Observer）"></a>1. KVO（Key-Value-Observer）</h3><p>在iOS中KVO经常被用来监听对象属性的改变，在某些地方合理使用KVO可以轻松的搞定一些问题。为什么要合理使用？接下来从KVO的本质来了解其利与弊。</p>
+<p><code>KVO</code>从字面意思理解就是<code>键值观察者</code>，<code>key</code>就是对象的某个属性， <code>value</code>是该属性的值，<code>Observer</code>就是监听 <code>key</code> 对应 <code>value</code> 的变化。</p>
+<p>一般在项目中怎么使用呢？我们来定义一个OC类，这里以 <code>HBPerson</code> 为例。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBPerson</span> : <span class="title">NSObject</span></span></div><div class="line"><span class="comment">/// 年龄</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">NSInteger</span> age;</div><div class="line"><span class="comment">/// 名字</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *name;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBPerson</span></span></div><div class="line"></div><div class="line">- (<span class="built_in">NSString</span> *)description &#123;</div><div class="line">    <span class="keyword">return</span> [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"\nname : %@\n, age : %zd"</span>,<span class="keyword">self</span>.name,<span class="keyword">self</span>.age];</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>声明了一个 <code>HBPerson</code> 类，并定义了两个属性 <code>age</code> 和 <code>name</code>。接下来我们来创建一个<code>HBPerson</code>对象并监听其 <code>age</code> 的变化。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">KVOViewController</span> ()</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) HBPerson *person;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">KVOViewController</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    <span class="keyword">self</span>.view.backgroundColor = [<span class="built_in">UIColor</span> whiteColor];</div><div class="line">    </div><div class="line">    <span class="keyword">self</span>.person = [[HBPerson alloc] init];</div><div class="line">    <span class="keyword">self</span>.person.name = <span class="string">@"Dylan"</span>;</div><div class="line">    <span class="keyword">self</span>.person.age = <span class="number">20</span>;</div><div class="line">    </div><div class="line">    [<span class="keyword">self</span>.person addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@"age"</span> options:<span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span> context:<span class="literal">nil</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSKeyValueChangeKey</span>,<span class="keyword">id</span>&gt; *)change context:(<span class="keyword">void</span> *)context &#123;</div><div class="line">   <span class="keyword">if</span> ([keyPath isEqualToString:<span class="string">@"age"</span>]) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@, change: %@"</span>,object,change);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        [<span class="keyword">super</span> observeValueForKeyPath:keyPath ofObject:object change:change context:context];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event &#123;</div><div class="line">    <span class="keyword">self</span>.person.age++;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>上述代码中，我们在控制器的 <code>viewDidLoad</code> 方法中创建了一个对象 <code>person</code> 并调用了<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)addObserver:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath options:(<span class="built_in">NSKeyValueObservingOptions</span>)options context:(<span class="keyword">nullable</span> <span class="keyword">void</span> *)context</div></pre></td></tr></table></figure></p>
+<p>来监听 <code>age</code> 属性。 options 设为 <code>NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld</code> 来观察新值和旧值。 每点击一次设备屏幕，让 <code>person</code> 的 <code>age</code> 自增，同时会触发下边的方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSKeyValueChangeKey</span>,<span class="keyword">id</span>&gt; *)change context:(<span class="keyword">void</span> *)context</div></pre></td></tr></table></figure>
+<p>触发该方法后，<code>change</code> 字典参数中返回了 <code>age</code> 的新值和旧值。</p>
+<p>执行结果：</p>
+<blockquote>
+<p>name : Dylan<br>, age : 21, change: {<br>    kind = 1;<br>    new = 21;<br>    old = 20;<br>}</p>
+</blockquote>
+<p>执行的结果中看到 <code>new = 21</code> 就是改变之后的值，以上就是<code>KVO</code>的基本操作，接下来讨论其底层原理。</p>
+<h3 id="2-KVO底层实现原理"><a href="#2-KVO底层实现原理" class="headerlink" title="2. KVO底层实现原理"></a>2. KVO底层实现原理</h3><p>依据上边的例子，我们首先在监听的方法中打个断点，然后点击设备屏幕，这时候触发了监听，在控制台中打印堆栈信息，如图：</p>
+<p><img src="../../../images/kvo_01.png" alt=""></p>
+<p>在堆栈信息中可以看到调用一个 <code>Foundation</code> 中的私有函数 <code>_NSSetLongLongValueAndNotify</code> ，因此可以猜测，该函数是实现KVO的关键点，而且该函数主要做了两个工作：</p>
+<blockquote>
+<ol>
+<li>修改属性值。</li>
+<li>修改属性值后，通知相关的对象。</li>
+</ol>
+</blockquote>
+<p>我们再来看一下 <code>person</code> 对象的 <code>isa</code>指向的类，如下图：</p>
+<p><img src="../../../images/kvo_02.png" alt=""></p>
+<p>显而易见，<code>person</code> 的 <code>isa</code> 指向了 <code>NSKVONotifying_HBPerson</code>，并不是 <code>HBPerson</code>。<br>接下来不妨在监听方法中打印一下 <code>person</code> 的 <code>class</code> 和 <code>supercalss</code>，首先引入<code>objc/runtime.h</code> 头文件。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"HBPerson.h"</span></span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></div><div class="line"></div><div class="line">......</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSKeyValueChangeKey</span>,<span class="keyword">id</span>&gt; *)change context:(<span class="keyword">void</span> *)context &#123;</div><div class="line">    <span class="keyword">if</span> ([keyPath isEqualToString:<span class="string">@"age"</span>]) &#123;</div><div class="line">         <span class="comment">// object_getClass 获取的是真实的类</span></div><div class="line">        Class personClass = object_getClass(object);</div><div class="line">        Class personClass2 = [object <span class="keyword">class</span>];</div><div class="line">        Class personSuperClass = [personClass superclass];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"\npersonClass: %@ \n personClass2: %@ \n personSuperClass : %@"</span>, personClass,personClass2,personSuperClass);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@, change: %@"</span>,object,change);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        [<span class="keyword">super</span> observeValueForKeyPath:keyPath ofObject:object change:change context:context];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">......</div></pre></td></tr></table></figure>
+<p>执行的结果：</p>
+<blockquote>
+<p>personClass: NSKVONotifying_HBPerson </p>
+<p>personClass2: HBPerson </p>
+<p>personSuperClass : HBPerson</p>
+</blockquote>
+<p>结果中 <code>NSKVONotifying_HBPerson</code> 是 <code>HBPerson</code> 的子类，也就是说使用<code>KVO</code>监听的对象会动态生成该对象所属类的子类</p>
+
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" data-id="ck9uyec010031elynxw8y62iv" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2019/06/02/Mach-O学习/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title"></p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" class="thumbnail">
+    
+    
+        <span style="background-image:url(../../../images/kvo_01.png)" alt="KVO刨根问底" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" class="title">KVO刨根问底</a></p>
+                            <p class="item-date"><time datetime="2019-12-20T08:39:31.000Z" itemprop="datePublished">2019-12-20</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/06/02/Mach-O学习/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/06/02/Mach-O学习/" class="title"></a></p>
+                            <p class="item-date"><time datetime="2019-06-02T10:28:17.000Z" itemprop="datePublished">2019-06-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/04/15/iOS开发中的锁使用/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_5.jpg)" alt="iOS开发中的锁使用" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2019/04/15/iOS开发中的锁使用/" class="title">iOS开发中的锁使用</a></p>
+                            <p class="item-date"><time datetime="2019-04-15T06:00:12.000Z" itemprop="datePublished">2019-04-15</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/01/02/NumPy基本使用-二/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/01/02/NumPy基本使用-二/" class="title">NumPy基本使用(二)</a></p>
+                            <p class="item-date"><time datetime="2019-01-02T05:52:13.000Z" itemprop="datePublished">2019-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/28/Numpy基本使用/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_8.jpg)" alt="Numpy基本使用(一)" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/12/28/Numpy基本使用/" class="title">Numpy基本使用(一)</a></p>
+                            <p class="item-date"><time datetime="2018-12-28T12:56:36.000Z" itemprop="datePublished">2018-12-28</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">六月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">5</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NumPy/">NumPy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swift/">Swift</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS底层原理/">iOS底层原理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图/">图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/服务端/">服务端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 12px;">C++</a> <a href="/tags/C语言/" style="font-size: 18px;">C语言</a> <a href="/tags/NumPy/" style="font-size: 10px;">NumPy</a> <a href="/tags/Python/" style="font-size: 14px;">Python</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/iOS底层原理/" style="font-size: 10px;">iOS底层原理</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/图/" style="font-size: 10px;">图</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/数据结构/" style="font-size: 12px;">数据结构</a> <a href="/tags/服务端/" style="font-size: 10px;">服务端</a> <a href="/tags/算法/" style="font-size: 16px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 14px;">链表</a> <a href="/tags/锁/" style="font-size: 10px;">锁</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2020 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

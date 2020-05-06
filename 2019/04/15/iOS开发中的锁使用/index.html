@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>iOS开发中的锁使用 | Dylan.Hu&#39;Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="iOS,锁" />
+    
+    <meta name="description" content="iOS中的锁主要有以下几种：  OSSpinLock os_unfair_lock pthread_mutex dispatch_semaphore dispatch_queue(DISPATCH_QUEUE_SERIAL) NSLock NSCondition NSConditionLock NSRecursiveLock @synchronized   1. OSSpinLock（自旋锁） 自">
+<meta name="keywords" content="iOS,锁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发中的锁使用">
+<meta property="og:url" content="http://yoursite.com/2019/04/15/iOS开发中的锁使用/index.html">
+<meta property="og:site_name" content="Dylan.Hu&#39;Memory">
+<meta property="og:description" content="iOS中的锁主要有以下几种：  OSSpinLock os_unfair_lock pthread_mutex dispatch_semaphore dispatch_queue(DISPATCH_QUEUE_SERIAL) NSLock NSCondition NSConditionLock NSRecursiveLock @synchronized   1. OSSpinLock（自旋锁） 自">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/logo/logo_tech_5.jpg">
+<meta property="og:updated_time" content="2020-05-06T06:20:53.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发中的锁使用">
+<meta name="twitter:description" content="iOS中的锁主要有以下几种：  OSSpinLock os_unfair_lock pthread_mutex dispatch_semaphore dispatch_queue(DISPATCH_QUEUE_SERIAL) NSLock NSCondition NSConditionLock NSRecursiveLock @synchronized   1. OSSpinLock（自旋锁） 自">
+<meta name="twitter:image" content="http://yoursite.com/images/logo/logo_tech_5.jpg">
+    
+
+    
+        <link rel="alternate" href="/" title="Dylan.Hu&#39;Memory" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/libs/titillium-web/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+    
+
+</head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/technology/">技术</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/life/">生活随笔</a>
+                                </li>
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/categories/others/">其他</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    <a class="page-title-link" href="/categories/technology/">技术</a>
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-iOS开发中的锁使用" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        iOS开发中的锁使用
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-subtitle">
+                <a href="/2019/04/15/iOS开发中的锁使用/" class="article-date">
+    <time datetime="2019-04-15T06:00:12.000Z" itemprop="datePublished">2019-04-15</time>
+</a>
+                
+    <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <p>iOS中的锁主要有以下几种：</p>
+<ul>
+<li><code>OSSpinLock</code></li>
+<li><code>os_unfair_lock</code></li>
+<li><code>pthread_mutex</code></li>
+<li><code>dispatch_semaphore</code></li>
+<li><code>dispatch_queue(DISPATCH_QUEUE_SERIAL)</code></li>
+<li><code>NSLock</code></li>
+<li><code>NSCondition</code></li>
+<li><code>NSConditionLock</code></li>
+<li><code>NSRecursiveLock</code></li>
+<li><code>@synchronized</code></li>
+</ul>
+<p><br></p>
+<h3 id="1-OSSpinLock（自旋锁）"><a href="#1-OSSpinLock（自旋锁）" class="headerlink" title="1. OSSpinLock（自旋锁）"></a>1. <code>OSSpinLock</code>（自旋锁）</h3><p><br></p>
+<p>自旋锁的特点：</p>
+<blockquote>
+<p>等待锁的线程会一直处于忙等状态，此过程中一直占用着CPU资源，效率较高。</p>
+</blockquote>
+<p>自旋锁的使用：</p>
+<p>导入头文件：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;libkern/OSAtomic.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBOSSpinLockDemo</span> () </span>&#123;</div><div class="line">    OSSpinLock _lock;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *dataArray;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBOSSpinLockDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        <span class="keyword">self</span>.dataArray = @[].mutableCopy;</div><div class="line">        <span class="comment">// 初始化锁</span></div><div class="line">        _lock = OS_SPINLOCK_INIT;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addNewData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    <span class="keyword">if</span> (OSSpinLockTry(&amp;_lock)) &#123;</div><div class="line">        <span class="comment">// 加锁</span></div><div class="line">        OSSpinLockLock(&amp;_lock);</div><div class="line">        <span class="comment">// 添加数据</span></div><div class="line">        [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">        <span class="comment">// 解锁</span></div><div class="line">        OSSpinLockUnlock(&amp;_lock);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><code>Objective-C</code> 中的 <code>NSMutableArray</code> 是非线程的安全的，在某些的情况下，可能会有多条线程同时添加数据，那么在添加数据前先上锁，添加完成后解锁，这样就能保证同一时间只能一条线程进行添加数据操作。</p>
+<p><code>OSSpinLock</code> 使用起来简单高效，但本质上其实也并不是百分之百线程安全，如果某个等待锁的线程优先级较高，它会一直占用着CPU资源，那么会导致优先级低的线程无法释放锁。<code>iOS 10.0</code> 后苹果废弃了 <code>OSSpinLock</code> 并使用 <code>os_unfair_lock</code> 来替代。</p>
+<p><br></p>
+<h3 id="2-os-unfair-lock"><a href="#2-os-unfair-lock" class="headerlink" title="2. os_unfair_lock"></a>2. <code>os_unfair_lock</code></h3><p><br></p>
+<h4 id="2-1-os-unfair-lock-简述"><a href="#2-1-os-unfair-lock-简述" class="headerlink" title="2.1 os_unfair_lock 简述"></a>2.1 <code>os_unfair_lock</code> 简述</h4><p><code>os_unfair_lock</code> 在 <code>&lt;os/lock.h&gt;</code> 中，在 <code>lock.h</code> 头文件中对 <code>os_unfair_lock</code> 的描述：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Low-level lock that allows waiters <span class="built_in">to</span> block efficiently <span class="keyword">on</span> <span class="title">contention</span>.</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"> * Replacement <span class="keyword">for</span> <span class="keyword">the</span> deprecated OSSpinLock. Does <span class="keyword">not</span> spin <span class="keyword">on</span> <span class="title">contention</span> <span class="title">but</span></div><div class="line"> * waits <span class="keyword">in</span> <span class="keyword">the</span> kernel <span class="built_in">to</span> be woken up <span class="keyword">by</span> <span class="keyword">an</span> unlock.</div><div class="line"></div><div class="line"> ...</div></pre></td></tr></table></figure>
+<p>指明了 <code>os_unfair_lock</code> 是一个 <code>底层锁</code> ，用来替换 <code>OSSpinLock</code>，不会忙等，等待该锁的线程会进入休眠状态，解锁后会通过内核唤醒。</p>
+<h4 id="2-2-os-unfair-lock-主要操作"><a href="#2-2-os-unfair-lock-主要操作" class="headerlink" title="2.2 os_unfair_lock 主要操作"></a>2.2 <code>os_unfair_lock</code> 主要操作</h4><p>初始化锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;</div></pre></td></tr></table></figure>
+<p>尝试加锁函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">bool</span> <span class="title">os_unfair_lock_trylock</span><span class="params">(<span class="keyword">os_unfair_lock_t</span> lock)</span></span>;</div></pre></td></tr></table></figure>
+<p>加锁函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">os_unfair_lock_lock</span><span class="params">(<span class="keyword">os_unfair_lock_t</span> lock)</span></span>;</div></pre></td></tr></table></figure>
+<p>解锁函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">os_unfair_lock_unlock</span><span class="params">(<span class="keyword">os_unfair_lock_t</span> lock)</span></span>;</div></pre></td></tr></table></figure>
+<h4 id="2-3-os-unfair-lock-的使用"><a href="#2-3-os-unfair-lock-的使用" class="headerlink" title="2.3 os_unfair_lock 的使用"></a>2.3 <code>os_unfair_lock</code> 的使用</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBOSUnfairLockDemo</span> () </span>&#123;</div><div class="line">    os_unfair_lock _lock;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *dataArray;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBOSUnfairLockDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        <span class="keyword">self</span>.dataArray = @[].mutableCopy;</div><div class="line">        _lock = OS_UNFAIR_LOCK_INIT;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addNewData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    os_unfair_lock_lock(&amp;_lock);</div><div class="line">    [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">    os_unfair_lock_unlock(&amp;_lock);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="3-pthread-mutex-（互斥锁）"><a href="#3-pthread-mutex-（互斥锁）" class="headerlink" title="3. pthread_mutex （互斥锁）"></a>3. <code>pthread_mutex</code> （互斥锁）</h3><p><br></p>
+<p><code>pthread_mutex</code> 是互斥锁，其特点：</p>
+<blockquote>
+<p>所有等待该锁的线程处于休眠状态。</p>
+</blockquote>
+<p><br></p>
+<p>创建相关属性并初始化</p>
+<ul>
+<li>创建普通锁<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 声明属性</span></div><div class="line"><span class="keyword">pthread_mutexattr_t</span> attr;</div><div class="line"><span class="comment">// 初始化该属性</span></div><div class="line">pthread_mutexattr_init(&amp;attr);</div><div class="line"><span class="comment">// 设置锁的属性类型： PTHREAD_MUTEX_RECURSIVE-递归锁  PTHREAD_MUTEX_DEFAULT-普通锁</span></div><div class="line">pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_DEFAULT);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>pthread_mutexattr_settype(&amp;attr, NULL);</code> 类型传 <code>NULL</code> 时就是普通锁，等价于 <code>pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_DEFAULT);</code></p>
+<p>创建锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">pthread_mutex_t</span> mutex;</div><div class="line">pthread_mutex_init(&amp;mutex, &amp;attr);</div><div class="line"><span class="comment">// 初始化该锁之后记得要销毁attr</span></div><div class="line">pthread_mutexattr_destroy(&amp;attr);</div></pre></td></tr></table></figure>
+<p>销毁锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 使用完毕后销毁锁资源</span></div><div class="line">pthread_mutex_destory(&amp;mutex);</div></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="Example："><a href="#Example：" class="headerlink" title="Example："></a>Example：</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBPthreadMutexDemo</span> () </span>&#123;</div><div class="line">    pthread_mutex_t _mutex;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *dataArray;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBPthreadMutexDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        <span class="comment">// 属性类型初始化</span></div><div class="line">        pthread_mutexattr_t attr;</div><div class="line">        pthread_mutexattr_init(&amp;attr);</div><div class="line">        pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_DEFAULT);</div><div class="line">        <span class="comment">// 初始化mutex</span></div><div class="line">        pthread_mutex_init(&amp;_mutex, &amp;attr);</div><div class="line">        <span class="comment">// 销毁attr</span></div><div class="line">        pthread_mutexattr_destroy(&amp;attr);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addNewData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    <span class="comment">// 执行加锁操作</span></div><div class="line">    pthread_mutex_lock(&amp;_mutex);</div><div class="line">    [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">    <span class="comment">// 释放所资源</span></div><div class="line">    pthread_mutex_unlock(&amp;_mutex);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)dealloc &#123;</div><div class="line">    <span class="comment">// 使用完毕后销毁该资源，C语言的api需要手动管理内存，ARC针对OC的api</span></div><div class="line">    pthread_mutex_destroy(&amp;_mutex);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<ul>
+<li>创建递归锁 : </li>
+</ul>
+<p>使用 <code>pthread_mutex</code> 创建递归锁只需在设置属性的时候将类型设置为 <code>PTHREAD_MUTEX_RECURSIVE</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="comment">// 设置锁的属性类型： PTHREAD_MUTEX_RECURSIVE-递归锁</span></div><div class="line">pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE);</div><div class="line">...</div></pre></td></tr></table></figure>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBPthreadMutexDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="comment">// 设置类型  PTHREAD_MUTEX_RECURSIVE</span></div><div class="line">        pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE);</div><div class="line"></div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)recursiveActionWithData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    pthread_mutex_lock(&amp;_mutex);</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.dataArray.count &lt; <span class="number">10</span>) &#123;</div><div class="line">        [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">        <span class="comment">// 递归调用，不会产生死锁。</span></div><div class="line">        [<span class="keyword">self</span> recursiveActionWithData:data];</div><div class="line">    &#125;</div><div class="line">    pthread_mutex_unlock(&amp;_mutex);</div><div class="line">&#125;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意： 在某些递归调用的场合下，如果使用 <code>pthread_mutex</code> 则需要使用递归锁，否则会产生死锁。</p>
+</blockquote>
+<p><br></p>
+<ul>
+<li>创建条件锁</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建pthread_mutex_t</span></div><div class="line"><span class="keyword">pthread_mutex_t</span> mutex;</div><div class="line"><span class="comment">// 传NULL创建默认锁</span></div><div class="line">pthread_mutex_init(&amp;mutex, <span class="literal">NULL</span>);</div></pre></td></tr></table></figure>
+<p>初始化条件  <code>pthread_cond_t</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">pthread_cond_t</span> condition;</div><div class="line">pthread_cond_init(&amp;condition, <span class="literal">NULL</span>);</div></pre></td></tr></table></figure>
+<p>条件等待，等待的时候，当前线程会休眠，放开mutex资源，被唤醒后，会再次对mutex加锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pthread_cond_wait(&amp;condition, &amp;mutex);</div></pre></td></tr></table></figure>
+<p>释放线程</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pthread_cond_signal(&amp;condition);</div></pre></td></tr></table></figure>
+<p>当设置了多个条件等待的时候，若要唤醒所有的等待的线程，则调用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pthread_cond_broadcast(&amp;condition);</div></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="Example-1"><a href="#Example-1" class="headerlink" title="Example:"></a>Example:</h4><p>经典的生产者消费者案例</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">... </div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBPthreadMutexDemo</span> () </span>&#123;</div><div class="line">    pthread_mutex_t _mutex;</div><div class="line">    pthread_cond_t _cond;</div><div class="line">&#125;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBPthreadMutexDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        pthread_mutexattr_destroy(&amp;attr);</div><div class="line">        </div><div class="line">        <span class="comment">// 初始化条件</span></div><div class="line">        pthread_cond_init(&amp;_cond, <span class="literal">NULL</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"><span class="meta">#pragma mark 生产者</span></div><div class="line">- (<span class="keyword">void</span>)producerWithData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    pthread_mutex_lock(&amp;_mutex);</div><div class="line">    [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">    <span class="comment">// 生产了新的数据后，发送信号，唤醒处于条件等待的线程</span></div><div class="line">    pthread_cond_signal(&amp;_cond);</div><div class="line">    pthread_mutex_unlock(&amp;_mutex);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#pragma mark 消费者</span></div><div class="line">- (<span class="keyword">void</span>)consumer &#123;</div><div class="line">    pthread_mutex_lock(&amp;_mutex);</div><div class="line">    <span class="comment">// 没有数据的时候，设置条件等待。</span></div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.dataArray.count) &#123;</div><div class="line">        pthread_cond_wait(&amp;_cond, &amp;_mutex);</div><div class="line">    &#125;</div><div class="line">    [<span class="keyword">self</span>.dataArray removeLastObject];</div><div class="line">    pthread_mutex_unlock(&amp;_mutex);</div><div class="line">&#125;</div><div class="line"></div><div class="line">...</div></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="4-dispatch-semaphore、GCD的串行队列"><a href="#4-dispatch-semaphore、GCD的串行队列" class="headerlink" title="4. dispatch_semaphore、GCD的串行队列"></a>4. <code>dispatch_semaphore</code>、<code>GCD的串行队列</code></h3><p><code>dispatch_semaphore</code> 是GCD中提供的 <code>信号量</code> 锁，可以用来控制线程并发数量。<br>当信号量的资源个数设置为1时，就只允许1条线程访问资源来保证线程同步。</p>
+<h4 id="Example-2"><a href="#Example-2" class="headerlink" title="Example:"></a>Example:</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">HBSemaphoreDemo</span> () </span>&#123;</div><div class="line">    dispatch_semaphore_t _semaphore;</div><div class="line">&#125;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *dataArray;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HBSemaphoreDemo</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">instancetype</span>)init &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">        <span class="keyword">self</span>.dataArray = @[].mutableCopy;</div><div class="line">        <span class="comment">// 初始化信号量并设置初始值为1</span></div><div class="line">        _semaphore = dispatch_semaphore_create(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)addNewData:(<span class="built_in">NSString</span> *)data &#123;</div><div class="line">    <span class="comment">// 该函数会判断信号量的值是否 &lt;= 0, 也就是还有没有空余的资源，</span></div><div class="line">    <span class="comment">// 如果满足条件则往下执行，并将信号量的资源-1，</span></div><div class="line">    <span class="comment">// 若不满足条件则进入休眠等待直到信号量有多余资源(信号量的值&gt;0)</span></div><div class="line">    dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);</div><div class="line">    [<span class="keyword">self</span>.dataArray addObject:data];</div><div class="line">    <span class="comment">// 执行任务后，释放信号量资源，该函数会将信号量的值+1</span></div><div class="line">    dispatch_semaphore_signal(_semaphore);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="5-NSLock-、-NSCondition-、-NSConditionLock-、-NSRecursiveLock"><a href="#5-NSLock-、-NSCondition-、-NSConditionLock-、-NSRecursiveLock" class="headerlink" title="5. NSLock 、 NSCondition 、 NSConditionLock 、 NSRecursiveLock"></a>5. <code>NSLock</code> 、 <code>NSCondition</code> 、 <code>NSConditionLock</code> 、 <code>NSRecursiveLock</code></h3><p><br></p>
+<p>这几个锁其实针对 <code>pthrea_mutex</code> 的封装，提供OC的api便于开发者的使用，毕竟对于绝大数的iOS开发者来说，使用OC的api更友好。</p>
+<p><br></p>
+<ul>
+<li><code>NSLock</code></li>
+</ul>
+<p><br></p>
+<p><code>NSLock</code> 是对 <code>pthread_mutex</code> 普通锁的封装</p>
+<p>使用起来简单，遵循了协议 <code>NSLocking</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">NSLocking</span></span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)lock;</div><div class="line">- (<span class="keyword">void</span>)unlock;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSLock</span> : <span class="title">NSObject</span> &lt;<span class="title">NSLocking</span>&gt; </span></div><div class="line"></div><div class="line">- (<span class="built_in">BOOL</span>)tryLock;</div><div class="line">- (<span class="built_in">BOOL</span>)lockBeforeDate:(<span class="built_in">NSDate</span> *)limit;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<ul>
+<li>NSCondition</li>
+</ul>
+<p><br></p>
+<p><code>NSCondition</code> 是对 <code>pthread_mutex</code> 和 <code>pthread_cond</code> 的封装</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSCondition</span> : <span class="title">NSObject</span> &lt;<span class="title">NSLocking</span>&gt; </span></div><div class="line">- (<span class="keyword">void</span>)wait;</div><div class="line">- (<span class="built_in">BOOL</span>)waitUntilDate:(<span class="built_in">NSDate</span> *)limit;</div><div class="line">- (<span class="keyword">void</span>)signal;</div><div class="line">- (<span class="keyword">void</span>)broadcast;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<ul>
+<li>NSConditionLock</li>
+</ul>
+<p><br></p>
+<p><code>NSConditionLock</code> 是对 <code>NSCondition</code> 的进一步封装，可以根据相应的场合设置相应的条件值。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSConditionLock</span> : <span class="title">NSObject</span> &lt;<span class="title">NSLocking</span>&gt; </span></div><div class="line">- (<span class="keyword">instancetype</span>)initWithCondition:(<span class="built_in">NSInteger</span>)condition </div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> condition;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)lockWhenCondition:(<span class="built_in">NSInteger</span>)condition;</div><div class="line">- (<span class="built_in">BOOL</span>)tryLock;</div><div class="line">- (<span class="built_in">BOOL</span>)tryLockWhenCondition:(<span class="built_in">NSInteger</span>)condition;</div><div class="line">- (<span class="keyword">void</span>)unlockWithCondition:(<span class="built_in">NSInteger</span>)condition;</div><div class="line">- (<span class="built_in">BOOL</span>)lockBeforeDate:(<span class="built_in">NSDate</span> *)limit;</div><div class="line">- (<span class="built_in">BOOL</span>)lockWhenCondition:(<span class="built_in">NSInteger</span>)condition beforeDate:(<span class="built_in">NSDate</span> *)limit;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<ul>
+<li>NSRecursiveLock</li>
+</ul>
+<p><br></p>
+<p><code>NSRecursiveLock</code> 同样是对 <code>pthread_mutex</code> 递归锁的封装</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSRecursiveLock</span> : <span class="title">NSObject</span> &lt;<span class="title">NSLocking</span>&gt; </span></div><div class="line">- (<span class="built_in">BOOL</span>)tryLock;</div><div class="line">- (<span class="built_in">BOOL</span>)lockBeforeDate:(<span class="built_in">NSDate</span> *)limit;</div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<h3 id="6-synchronized"><a href="#6-synchronized" class="headerlink" title="6. @synchronized"></a>6. <code>@synchronized</code></h3>
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://yoursite.com/2019/04/15/iOS开发中的锁使用/" data-id="ck9uyebvy0003elynxb6acb3h" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="google-plus" href="/" target="_blank">
+                        <i class="icon fa fa-google-plus"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="/" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2019/06/02/Mach-O学习/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            (no title)
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+        <a href="/2019/01/02/NumPy基本使用-二/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">NumPy基本使用(二)</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" class="thumbnail">
+    
+    
+        <span style="background-image:url(../../../images/kvo_01.png)" alt="KVO刨根问底" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/12/20/technology/iOS_low_level_theory/KVO刨根问底/" class="title">KVO刨根问底</a></p>
+                            <p class="item-date"><time datetime="2019-12-20T08:39:31.000Z" itemprop="datePublished">2019-12-20</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/06/02/Mach-O学习/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/06/02/Mach-O学习/" class="title"></a></p>
+                            <p class="item-date"><time datetime="2019-06-02T10:28:17.000Z" itemprop="datePublished">2019-06-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/04/15/iOS开发中的锁使用/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_5.jpg)" alt="iOS开发中的锁使用" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2019/04/15/iOS开发中的锁使用/" class="title">iOS开发中的锁使用</a></p>
+                            <p class="item-date"><time datetime="2019-04-15T06:00:12.000Z" itemprop="datePublished">2019-04-15</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2019/01/02/NumPy基本使用-二/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/01/02/NumPy基本使用-二/" class="title">NumPy基本使用(二)</a></p>
+                            <p class="item-date"><time datetime="2019-01-02T05:52:13.000Z" itemprop="datePublished">2019-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/28/Numpy基本使用/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/logo/logo_tech_8.jpg)" alt="Numpy基本使用(一)" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/technology/">技术</a></p>
+                            <p class="item-title"><a href="/2018/12/28/Numpy基本使用/" class="title">Numpy基本使用(一)</a></p>
+                            <p class="item-date"><time datetime="2018-12-28T12:56:36.000Z" itemprop="datePublished">2018-12-28</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/others/">其他</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/technology/">技术</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">六月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">五月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">5</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C语言/">C语言</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NumPy/">NumPy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swift/">Swift</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cocos2d/">cocos2d</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS底层原理/">iOS底层原理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/二叉树/">二叉树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图/">图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/多线程/">多线程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据结构/">数据结构</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/服务端/">服务端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/聚范/">聚范</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/链表/">链表</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/C/" style="font-size: 12px;">C++</a> <a href="/tags/C语言/" style="font-size: 18px;">C语言</a> <a href="/tags/NumPy/" style="font-size: 10px;">NumPy</a> <a href="/tags/Python/" style="font-size: 14px;">Python</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/cocos2d/" style="font-size: 10px;">cocos2d</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/iOS底层原理/" style="font-size: 10px;">iOS底层原理</a> <a href="/tags/二叉树/" style="font-size: 10px;">二叉树</a> <a href="/tags/图/" style="font-size: 10px;">图</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/数据结构/" style="font-size: 12px;">数据结构</a> <a href="/tags/服务端/" style="font-size: 10px;">服务端</a> <a href="/tags/算法/" style="font-size: 16px;">算法</a> <a href="/tags/聚范/" style="font-size: 10px;">聚范</a> <a href="/tags/链表/" style="font-size: 14px;">链表</a> <a href="/tags/锁/" style="font-size: 10px;">锁</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2020 Dylan.Hu&#39;Memory</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+    
+    <script>
+    var disqus_shortname = 'hexo-theme-hueman';
+    
+    
+    var disqus_url = 'http://yoursite.com/2019/04/15/iOS开发中的锁使用/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+
+
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
